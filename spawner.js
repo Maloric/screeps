@@ -10,7 +10,7 @@ module.exports = {
         let blueprints = [{
             name: 'harvester',
             capabilities: [WORK, CARRY, MOVE],
-            min: 2
+            min: 3
         }, {
             name: 'builder',
             capabilities: [WORK, CARRY, MOVE],
@@ -18,7 +18,7 @@ module.exports = {
         }, {
             name: 'upgrader',
             capabilities: [WORK, CARRY, MOVE],
-            min: 2
+            min: 3
         }];
 
         for (let i = 0; i < blueprints.length; i++) {
