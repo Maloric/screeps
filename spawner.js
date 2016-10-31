@@ -14,11 +14,11 @@ module.exports = {
         }, {
             name: 'builder',
             capabilities: [WORK, CARRY, MOVE],
-            min: 1
+            min: 2
         }, {
             name: 'upgrader',
             capabilities: [WORK, CARRY, MOVE],
-            min: 1
+            min: 2
         }];
 
         for (let i = 0; i < blueprints.length; i++) {
