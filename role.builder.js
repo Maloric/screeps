@@ -7,7 +7,7 @@ var roleBuilder = {
             creep.memory.building = false;
             creep.say('harvesting');
 	    }
-	    else if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+	    if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.building = true;
 	        creep.say('building');
 	    }
@@ -15,13 +15,12 @@ var roleBuilder = {
 	    if(creep.memory.building) {
             var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
 
-
-            if (targets.length === 0) {
+            /*if (targets.length === 0) {
                 targets = creep.room.find(FIND_STRUCTURES, {
                     filter: object => object.hits < object.hitsMax
                 });
                 targets.sort((a,b) => a.hits - b.hits);
-            }
+            }*/
 
             if(targets.length > 0) {
                 if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {

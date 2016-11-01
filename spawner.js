@@ -13,12 +13,12 @@ module.exports = {
             min: 3
         }, {
             name: 'builder',
-            capabilities: [WORK, CARRY, MOVE],
-            min: 2
+            capabilities: [WORK, WORK, CARRY, MOVE, MOVE],
+            min: 3
         }, {
             name: 'upgrader',
-            capabilities: [WORK, CARRY, CARRY, MOVE, MOVE],
-            min: 3
+            capabilities: [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
+            min: 6
         }];
 
         for (let i = 0; i < blueprints.length; i++) {
