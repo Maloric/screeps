@@ -29,7 +29,7 @@ module.exports = {
                 let spawn = Game.spawns['Spawn1'];
 
                 if (spawn.canCreateCreep(blueprint.capabilities) === OK) {
-                    var res = spawn.createCreep(blueprint.capabilities, undefined, {
+                    var newName = spawn.createCreep(blueprint.capabilities, undefined, {
                         role: blueprint.name
                     });
                     console.log(`Spawning ${newName}`);
