@@ -26,7 +26,7 @@ var roleBuilder = {
             }
 	    } else if (creep.memory.building) {
             let res = creep.build(creep.memory.target);
-            this.resolveBuildOrRepair(res);
+            this.resolveBuild(res);
         }
 	    else {
 	        var sources = creep.room.find(FIND_SOURCES);
