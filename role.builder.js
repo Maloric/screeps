@@ -11,10 +11,10 @@ var roleBuilder = {
 	        creep.say('building');
 	    }
 
-	    if(creep.memory.building && !creep.memory.buildTarget) {
+	    if(creep.memory.building && !creep.memory.target) {
             var buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if(buildTargets.length) {
-                creep.memory.buildTarget = buildTargets[0];
+                creep.memory.target = buildTargets[0];
             } else {
                 let repairTargets = creep.room.find(FIND_STRUCTURES, {
                     filter: object => object.hits < object.hitsMax
