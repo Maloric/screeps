@@ -26,7 +26,7 @@ var roleBuilder = {
             }
 	    } else if (creep.memory.building) {
             let res = creep.build(creep.memory.target);
-            this.resolveBuild(res);
+            roleBuilder.resolveBuild(creep, res);
         }
 	    else {
 	        var sources = creep.room.find(FIND_SOURCES);
@@ -44,7 +44,7 @@ var roleBuilder = {
             case ERR_INVALID_TARGET:
                 if (creep.memory.target.hits < creep.memory.target.hitsMax) {
                     res = creep.repair(creep.memory.target);
-                    this.resolveRepair(res);
+                    roleBuilder.resolveRepair(creep, res);
                 } else {
                     creep.say('Repair finished.');
                     delete creep.memory.target;
