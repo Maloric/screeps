@@ -7,24 +7,26 @@ var roleBuilder = {
             creep.memory.building = false;
             creep.say('harvesting');
 	    }
-	    if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+	    else if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.building = true;
 	        creep.say('building');
 	    }
 
 	    if(creep.memory.building) {
-            var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-
-            /*if (targets.length === 0) {
-                targets = creep.room.find(FIND_STRUCTURES, {
+            var buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
+            if(buildTargets.length) {
+                if(creep.build(buildTargets[0]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(buildTargets[0]);
+                }
+            } else {
+                let repairTargets = creep.room.find(FIND_STRUCTURES, {
                     filter: object => object.hits < object.hitsMax
                 });
-                targets.sort((a,b) => a.hits - b.hits);
-            }*/
-
-            if(targets.length > 0) {
-                if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0]);
+                repairTargets.sort((a,b) => a.hits - b.hits);
+                if(repairTargets.length > 0) {
+                    if(creep.repair(repairTargets[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(repairTargets[0]);
+                    }
                 }
             }
 	    }
