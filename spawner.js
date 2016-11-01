@@ -28,7 +28,7 @@ module.exports = {
             if (existing.length < blueprint.min) {
                 let spawn = Game.spawns['Spawn1'];
 
-                if (spawn.canCreateCreep(blueprint.capabilities === OK) {
+                if (spawn.canCreateCreep(blueprint.capabilities) === OK) {
                     var res = spawn.createCreep(blueprint.capabilities, undefined, {
                         role: blueprint.name
                     });
