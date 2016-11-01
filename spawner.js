@@ -26,10 +26,13 @@ module.exports = {
             let existing = _.filter(Game.creeps, (creep) => creep.memory.role == blueprint.name);
 
             if (existing.length < blueprint.min) {
-                var newName = Game.spawns['Spawn1'].createCreep(blueprint.capabilities, undefined, {
+                var res = Game.spawns['Spawn1'].createCreep(blueprint.capabilities, undefined, {
                     role: blueprint.name
                 });
-                console.log(`Spawning ${newName}`);
+
+                if (res !== ERR_BUSY && res !== ERR_NOT_ENOUGH_ENERGY) {
+                    console.log(`Spawning ${newName}`);
+                }
             }
         }
     }
