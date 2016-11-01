@@ -14,7 +14,7 @@ var roleBuilder = {
 	    if(creep.memory.building && !creep.memory.target) {
             var buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if(buildTargets.length) {
-                creep.memory.target = buildTargets[0];
+                creep.memory.target = buildTargets[0].id;
             } else {
                 let repairTargets = creep.room.find(FIND_STRUCTURES, {
                     filter: object => object.hits < object.hitsMax
@@ -25,8 +25,9 @@ var roleBuilder = {
                 }
             }
 	    } else if (creep.memory.building) {
-            let res = creep.build(creep.memory.target);
-            roleBuilder.resolveBuild(creep, res);
+            let target = Game.getObjectById(creep.memory.target);
+            let res = creep.build(target);
+            roleBuilder.resolveBuild(creep, res, target);
         }
 	    else {
 	        var sources = creep.room.find(FIND_SOURCES);
@@ -36,27 +37,27 @@ var roleBuilder = {
 	    }
 	},
 
-    resolveBuild: (creep, res) => {
+    resolveBuild: (creep, res, target) => {
         switch(res) {
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(creep.memory.target);
+                creep.moveTo(target);
                 break;
             case ERR_INVALID_TARGET:
-                if (creep.memory.target.hits < creep.memory.target.hitsMax) {
-                    res = creep.repair(creep.memory.target);
-                    roleBuilder.resolveRepair(creep, res);
+                if (target.hits < target.hitsMax) {
+                    res = creep.repair(target);
+                    roleBuilder.resolveRepair(creep, res, target);
                 } else {
-                    creep.say('Repair finished.');
+                    creep.say('Build finished.');
                     delete creep.memory.target;
                 }
                 break;
         }
     },
 
-    resolveRepair: (creep, res) => {
+    resolveRepair: (creep, res, target) => {
         switch(res) {
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(creep.memory.target);
+                creep.moveTo(target);
                 break;
             case ERR_INVALID_TARGET:
                 console.log('Invalid repair target.  Clearing target.');
