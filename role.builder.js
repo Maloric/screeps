@@ -11,7 +11,7 @@ var roleBuilder = {
 	        creep.say('building');
 	    }
 
-	    if(creep.memory.building && (!creep.memory.target || creep.memory.target.id)) {
+	    if(creep.memory.building && !creep.memory.target) {
             var buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if(buildTargets.length) {
                 creep.memory.target = buildTargets[0].id;
@@ -43,7 +43,7 @@ var roleBuilder = {
                 creep.moveTo(target);
                 break;
             case ERR_INVALID_TARGET:
-                if (target.hits < target.hitsMax) {
+                if (target && target.hits && target.hits < target.hitsMax) {
                     res = creep.repair(target);
                     roleBuilder.resolveRepair(creep, res, target);
                 } else {
