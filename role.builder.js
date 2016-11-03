@@ -24,11 +24,14 @@ var roleBuilder = {
                 if(repairTargets.length > 0) {
                     repairTargets.sort((a,b) => a.hits - b.hits);
                     creep.memory.target = repairTargets[0];
+                } else {
+                    console.log('No repair targets');
                 }
             }
 	    } else if (creep.memory.building) {
             let target = Game.getObjectById(creep.memory.target);
             let res = creep.build(target);
+            console.log(`${creep.name} is resolving build status of ${res}`);
             roleBuilder.resolveBuild(creep, res, target);
         }
 	    else {
