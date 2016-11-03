@@ -6,7 +6,7 @@ var spawner = require('spawner');
 module.exports.loop = function () {
     spawner.autoSpawn();
 
-    let tower = Game.getObjectById('5f835d9b0ee1db1deff3aac8');
+    let tower = Game.getObjectById('5819fe430de1de3555de348d');
     if(tower) {
         let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
