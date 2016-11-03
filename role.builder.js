@@ -21,6 +21,9 @@ var roleBuilder = {
                 let repairTargets = creep.room.find(FIND_STRUCTURES, {
                     filter: object => object.hits < object.hitsMax
                 });
+
+                console.log(`There are ${repairTargets.length} repair targets`);
+
                 if(repairTargets.length > 0) {
                     repairTargets.sort((a,b) => a.hits - b.hits);
                     creep.memory.target = repairTargets[0];
