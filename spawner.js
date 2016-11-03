@@ -17,7 +17,7 @@ module.exports = {
             min: 3
         }, {
             name: 'upgrader',
-            capabilities: [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
+            capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
             min: 6
         }];
 
