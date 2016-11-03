@@ -48,6 +48,7 @@ var roleBuilder = {
                 creep.moveTo(target);
                 break;
             case ERR_INVALID_TARGET:
+                console.log(`Target has ${target.hits} / ${target.hitsMax} hp`);
                 if (target && target.hits && target.hits < target.hitsMax) {
                     res = creep.repair(target);
                     roleBuilder.resolveRepair(creep, res, target);
