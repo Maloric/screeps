@@ -16,6 +16,8 @@ let roleArcher = {
 
         if (creep.memory.target) {
             roleArcher.attack(creep);
+        } else {
+            roleArcher.idle(creep);
         }
     },
 
@@ -25,10 +27,17 @@ let roleArcher = {
             let res = creep.rangedAttack(target);
             switch(res) {
                 case ERR_NOT_IN_RANGE:
-                creep.moveTo(target);
-                break;
+                    creep.moveTo(target);
+                    break;
+                case ERR_INVALID_TARGET:
+                    delete creep.memory.target;
+                    break;
             }
         }
+    },
+
+    idle: (creep) => {
+        creep.moveTo(Game.flags['camp']);
     }
 };
 
