@@ -28,13 +28,16 @@ var roleBuilder = {
                     repairTargets.sort((a,b) => a.hits - b.hits);
                     creep.memory.target = repairTargets[0].id;
 
-                    console.log(`Repair target is ${repairTargets[0]}`);
+                    console.log(`Repair target is ${repairTargets[0].id}`);
                 } else {
                     console.log('No repair targets');
                 }
             }
 	    } else if (creep.memory.building) {
+            console.log(`Getting object from id: ${creep.memory.target}`);
             let target = Game.getObjectById(creep.memory.target);
+            console.log(`Object is ${target}`);
+
             let res = creep.build(target);
             console.log(`${creep.name} is resolving build status of ${res}`);
             roleBuilder.resolveBuild(creep, res, target);
