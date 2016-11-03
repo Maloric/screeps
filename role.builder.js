@@ -2,20 +2,22 @@ var roleBuilder = {
 
     /** @param {Creep} creep **/
     run: (creep) => {
-        if(creep.memory.building && creep.carry.energy === 0) {
+        if(creep.carry.energy === 0) {
             creep.memory.building = false;
             creep.say('harvesting');
 	    }
-	    else if(!creep.memory.building && creep.carry.energy === creep.carryCapacity) {
+	    else if(creep.carry.energy === creep.carryCapacity) {
 	        creep.memory.building = true;
 	        creep.say('building');
 	    }
 
 	    if(creep.memory.building && !creep.memory.target) {
             var buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            if(buildTargets.length) {
+            if(buildTargets.length > 0) {
+                console.log(`${creep.name} is building`);
                 creep.memory.target = buildTargets[0].id;
             } else {
+                console.log(`${creep.name} is repairing`);
                 let repairTargets = creep.room.find(FIND_STRUCTURES, {
                     filter: object => object.hits < object.hitsMax
                 });
