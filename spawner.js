@@ -9,12 +9,12 @@ module.exports = {
 
         let blueprints = [{
             name: 'harvester',
-            capabilities: [WORK, WORK, CARRY, CARRY, MOVE],
-            min: 3
+            capabilities: [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
+            min: 5
         }, {
             name: 'builder',
-            capabilities: [WORK, WORK, CARRY, MOVE, MOVE],
-            min: 3
+            capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+            min: 5
         }, {
             name: 'upgrader',
             capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
