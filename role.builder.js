@@ -28,7 +28,7 @@ var roleBuilder = {
                     repairTargets.sort((a,b) => a.hits - b.hits);
                     creep.memory.target = repairTargets[0].id;
 
-                    console.log(`Repair target is ${repairTargets[0]`}`);
+                    console.log(`Repair target is ${repairTargets[0]}`);
                 } else {
                     console.log('No repair targets');
                 }
