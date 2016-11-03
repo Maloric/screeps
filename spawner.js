@@ -19,6 +19,10 @@ module.exports = {
             name: 'upgrader',
             capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
             min: 6
+        }, {
+            name: 'archer',
+            capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
+            min: 6
         }];
 
         for (let i = 0; i < blueprints.length; i++) {
