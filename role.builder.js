@@ -14,7 +14,6 @@ var roleBuilder = {
 	    if(creep.memory.building && !creep.memory.target) {
             var buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if(buildTargets.length > 0) {
-                console.log(`${creep.name} is building`);
                 creep.memory.target = buildTargets[0].id;
             } else {
                 console.log(`${creep.name} is repairing`);
@@ -22,24 +21,17 @@ var roleBuilder = {
                     filter: object => object.hits < object.hitsMax
                 });
 
-                console.log(`There are ${repairTargets.length} repair targets`);
-
                 if(repairTargets.length > 0) {
                     repairTargets.sort((a,b) => a.hits - b.hits);
                     creep.memory.target = repairTargets[0].id;
-
-                    console.log(`Repair target is ${repairTargets[0].id}`);
                 } else {
                     console.log('No repair targets');
                 }
             }
 	    } else if (creep.memory.building) {
-            console.log(`Getting object from id: ${creep.memory.target}`);
             let target = Game.getObjectById(creep.memory.target);
-            console.log(`Object is ${target}`);
 
             let res = creep.build(target);
-            console.log(`${creep.name} is resolving build status of ${res}`);
             roleBuilder.resolveBuild(creep, res, target);
         }
 	    else {
