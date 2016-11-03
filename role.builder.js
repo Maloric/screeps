@@ -47,9 +47,9 @@ var roleBuilder = {
             case ERR_NOT_IN_RANGE:
                 creep.moveTo(target);
                 break;
-            case ERR_INVALID_TARGET:
-                console.log(`Target has ${target.hits} / ${target.hitsMax} hp`);
+                case ERR_INVALID_TARGET:
                 if (target && target.hits && target.hits < target.hitsMax) {
+                    console.log(`Target has ${target.hits} / ${target.hitsMax} hp`);
                     res = creep.repair(target);
                     roleBuilder.resolveRepair(creep, res, target);
                 } else {
