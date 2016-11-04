@@ -10,19 +10,24 @@ module.exports = {
         let blueprints = [{
             name: 'harvester',
             capabilities: [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
-            min: 5
+            min: 3
         }, {
             name: 'builder',
             capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-            min: 5
+            min: 2
         }, {
             name: 'upgrader',
-            capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+            capabilities: [WORK, CARRY, MOVE],
             min: 6
         }, {
             name: 'archer',
             capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
-            min: 2
+            min: 0
+        },
+        {
+            name: 'serf',
+            capabilities: [WORK, CARRY, MOVE],
+            min: 1
         }];
 
         for (let i = 0; i < blueprints.length; i++) {
