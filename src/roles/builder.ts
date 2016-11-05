@@ -1,64 +1,61 @@
-let harvestBehaviour = require('behaviour.harvest');
-var roleBuilder = {
-    /** @param {Creep} creep **/
-    run: (creep) => {
-        if(creep.carry.energy === 0) {
+import { Harvest } from '../behaviours/index';
+export class Builder {
+    static run(creep: any) {
+        if (creep.carry.energy === 0) {
             creep.memory.building = false;
             creep.say('harvesting');
-	    }
-	    else if(creep.carry.energy === creep.carryCapacity) {
-	        creep.memory.building = true;
-	        creep.say('building');
-	    }
+        } else if (creep.carry.energy === creep.carryCapacity) {
+            creep.memory.building = true;
+            creep.say('building');
+        }
 
-	    if(creep.memory.building && !creep.memory.target) {
-            var buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            if(buildTargets.length > 0) {
+        if (creep.memory.building && !creep.memory.target) {
+            let buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
+            if (buildTargets.length > 0) {
                 creep.memory.target = buildTargets[0].id;
             } else {
                 console.log(`${creep.name} is repairing`);
                 let repairTargets = creep.room.find(FIND_STRUCTURES, {
-                    filter: object => object.hits < object.hitsMax
+                    filter: (object: any) => object.hits < object.hitsMax
                 });
 
-                if(repairTargets.length > 0) {
-                    repairTargets.sort((a,b) => a.hits - b.hits);
+                if (repairTargets.length > 0) {
+                    repairTargets.sort((a: any, b: any) => a.hits - b.hits);
                     creep.memory.target = repairTargets[0].id;
                 } else {
                     console.log('No repair targets');
                 }
             }
-	    } else if (creep.memory.building) {
+        } else if (creep.memory.building) {
             let target = Game.getObjectById(creep.memory.target);
 
             let res = creep.build(target);
-            roleBuilder.resolveBuild(creep, res, target);
+            Builder.resolveBuild(creep, res, target);
+        } else {
+            Harvest(creep);
         }
-	    else {
-            harvestBehaviour.harvest(creep);
-	    }
-	},
+    }
 
-    resolveBuild: (creep, res, target) => {
-        switch(res) {
+    static resolveBuild(creep: any, res: number, target: any) {
+        switch (res) {
             case ERR_NOT_IN_RANGE:
                 creep.moveTo(target);
                 break;
-                case ERR_INVALID_TARGET:
+            case ERR_INVALID_TARGET:
                 if (target && target.hits && target.hits < target.hitsMax) {
                     console.log(`Target has ${target.hits} / ${target.hitsMax} hp`);
                     res = creep.repair(target);
-                    roleBuilder.resolveRepair(creep, res, target);
+                    Builder.resolveRepair(creep, res, target);
                 } else {
                     creep.say('Build finished.');
                     delete creep.memory.target;
                 }
                 break;
         }
-    },
+    }
 
-    resolveRepair: (creep, res, target) => {
-        switch(res) {
+    static resolveRepair(creep: any, res: number, target: any) {
+        switch (res) {
             case ERR_NOT_IN_RANGE:
                 creep.moveTo(target);
                 break;
@@ -68,6 +65,4 @@ var roleBuilder = {
                 break;
         }
     }
-};
-
-module.exports = roleBuilder;
+}

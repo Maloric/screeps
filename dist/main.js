@@ -1,42 +1,35 @@
-var roleHarvester = require('role.harvester');
-var roleUpgrader = require('role.upgrader');
-var roleBuilder = require('role.builder');
-var roleArcher = require('role.archer');
-var spawner = require('spawner');
-
-module.exports.loop = function () {
-    spawner.autoSpawn();
-
+import { Harvester, Upgrader, Builder, Archer } from './roles/index';
+import { Spawner } from './spawner';
+module.exports.loop = () => {
+    Spawner.autoSpawn();
     let tower = Game.getObjectById('5819fe430de1de3555de348d');
-    if(tower) {
+    if (tower) {
         let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
         });
-        if(closestDamagedStructure) {
+        if (closestDamagedStructure) {
             tower.repair(closestDamagedStructure);
         }
-
         let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if(closestHostile) {
+        if (closestHostile) {
             tower.attack(closestHostile);
         }
     }
-
-    for(var name in Game.creeps) {
-        var creep = Game.creeps[name];
-        switch(creep.memory.role) {
+    for (let name in Game.creeps) {
+        let creep = Game.creeps[name];
+        switch (creep.memory.role) {
             case 'harvester':
             case 'serf':
-                roleHarvester.run(creep);
+                Harvester.run(creep);
                 break;
             case 'upgrader':
-                roleUpgrader.run(creep);
+                Upgrader.run(creep);
                 break;
             case 'builder':
-                roleBuilder.run(creep);
+                Builder.run(creep);
                 break;
             case 'archer':
-                roleArcher.run(creep);
+                Archer.run(creep);
                 break;
             default:
                 console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);

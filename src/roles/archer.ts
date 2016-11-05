@@ -1,10 +1,8 @@
-let roleArcher = {
-    /** @param {Creep} creep **/
-    run: (creep) => {
-
+export class Archer {
+    static run(creep: any) {
         if (!creep.memory.target) {
             let targets = creep.room.find(FIND_HOSTILE_CREEPS, {
-                filter: function(object) {
+                filter: (object: any) => {
                     return object.getActiveBodyparts(ATTACK) === 0;
                 }
             });
@@ -15,17 +13,17 @@ let roleArcher = {
         }
 
         if (creep.memory.target) {
-            roleArcher.attack(creep);
+            Archer.attack(creep);
         } else {
-            roleArcher.idle(creep);
+            Archer.idle(creep);
         }
-    },
+    }
 
-    attack: (creep) => {
+    static attack(creep: any) {
         let target = Game.getObjectById(creep.memory.target);
         if (target) {
             let res = creep.rangedAttack(target);
-            switch(res) {
+            switch (res) {
                 case ERR_NOT_IN_RANGE:
                     creep.moveTo(target);
                     break;
@@ -34,11 +32,9 @@ let roleArcher = {
                     break;
             }
         }
-    },
+    }
 
-    idle: (creep) => {
+    static idle(creep: any) {
         creep.moveTo(Game.flags['camp']);
     }
-};
-
-module.exports = roleArcher;
+}

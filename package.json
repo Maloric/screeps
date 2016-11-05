@@ -1,0 +1,38 @@
+{
+  "name": "maloric-screeps",
+  "version": "1.0.0",
+  "description": "My screeps stuff",
+  "scripts": {
+    "lint": "tslint -c tslint.json src/**/*.ts",
+    "precompile": "rimraf ./dist",
+    "compile": "tsc"
+  },
+  "contributors": [
+    "Jamie Morris <jamie@maloric.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maloric/screeps.git"
+  },
+  "keywords": [
+    "lint",
+    "tslint",
+    "jasmine"
+  ],
+  "author": {
+    "name": "Jamie Morris",
+    "email": "jamie@maloric.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maloric/screeps/issues"
+  },
+  "homepage": "https://github.com/maloric/screeps#readme",
+  "devDependencies": {
+    "@types/node": "^6.0.41",
+    "rimraf": "^2.5.4",
+    "tslint": "3.14.0",
+    "typescript": "^2.0.3",
+    "typings": "^1.5.0"
+  }
+}
