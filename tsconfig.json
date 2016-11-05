@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "es6",
+    "module": "commonjs",
     "target": "es6",
     "removeComments": true,
     "noResolve": false,
@@ -9,7 +9,7 @@
     "strictNullChecks": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
-    "outDir": "./dist/"
+    "outDir": "./tmp/"
   },
   "compileOnSave": false,
   "include": [

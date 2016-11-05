@@ -4,8 +4,9 @@
   "description": "My screeps stuff",
   "scripts": {
     "lint": "tslint -c tslint.json src/**/*.ts",
-    "precompile": "rimraf ./dist",
-    "compile": "tsc"
+    "prebuild": "rimraf ./dist",
+    "build": "tsc && webpack tmp/main.js dist/main.js",
+    "postbuild": "prepend dist/main.js \"module.exports = \""
   },
   "contributors": [
     "Jamie Morris <jamie@maloric.com>"
@@ -30,6 +31,7 @@
   "homepage": "https://github.com/maloric/screeps#readme",
   "devDependencies": {
     "@types/node": "^6.0.41",
+    "prepend-file-cli": "^1.0.4",
     "rimraf": "^2.5.4",
     "tslint": "3.14.0",
     "typescript": "^2.0.3",
