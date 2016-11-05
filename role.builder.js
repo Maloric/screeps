@@ -1,5 +1,5 @@
+let harvestBehaviour = require('behaviour.harvest');
 var roleBuilder = {
-
     /** @param {Creep} creep **/
     run: (creep) => {
         if(creep.carry.energy === 0) {
@@ -35,10 +35,7 @@ var roleBuilder = {
             roleBuilder.resolveBuild(creep, res, target);
         }
 	    else {
-	        var sources = creep.room.find(FIND_SOURCES);
-            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0]);
-            }
+            harvestBehaviour.harvest(creep);
 	    }
 	},
 
