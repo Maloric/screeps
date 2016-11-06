@@ -22,7 +22,7 @@ export class Spawner {
             }, {
                 name: 'archer',
                 capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
-                min: 0
+                min: 2
             },
             {
                 name: 'serf',
