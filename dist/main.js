@@ -51,15 +51,15 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    spawner_1.Spawner.autoSpawn();
 	    let tower = Game.getObjectById('5819fe430de1de3555de348d');
 	    if (tower) {
+	        let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+	        if (closestHostile) {
+	            tower.attack(closestHostile);
+	        }
 	        let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
 	            filter: (structure) => structure.hits < structure.hitsMax
 	        });
 	        if (closestDamagedStructure) {
 	            tower.repair(closestDamagedStructure);
-	        }
-	        let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-	        if (closestHostile) {
-	            tower.attack(closestHostile);
 	        }
 	    }
 	    for (let name in Game.creeps) {
@@ -262,7 +262,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    return (structure.structureType === STRUCTURE_TOWER
 	                        || structure.structureType === STRUCTURE_EXTENSION
 	                        || structure.structureType === STRUCTURE_SPAWN
-	                        || structure.structureType === STRUCTURE_CONTAINER) &&
+	                        || structure.structureType === STRUCTURE_CONTAINER
+	                        || structure.structureType === STRUCTURE_STORAGE) &&
 	                        structure.energy < structure.energyCapacity;
 	                }
 	            });
@@ -334,7 +335,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }, {
 	                name: 'archer',
 	                capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
-	                min: 0
+	                min: 2
 	            },
 	            {
 	                name: 'serf',

@@ -6,16 +6,16 @@ module.exports.loop = () => {
 
     let tower: any = Game.getObjectById('5819fe430de1de3555de348d');
     if (tower) {
+        let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if (closestHostile) {
+            tower.attack(closestHostile);
+        }
+
         let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure: any) => structure.hits < structure.hitsMax
         });
         if (closestDamagedStructure) {
             tower.repair(closestDamagedStructure);
-        }
-
-        let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (closestHostile) {
-            tower.attack(closestHostile);
         }
     }
 
