@@ -11,11 +11,13 @@ module.exports.loop = () => {
             tower.attack(closestHostile);
         }
 
-        let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure: any) => structure.hits < structure.hitsMax
-        });
-        if (closestDamagedStructure) {
-            tower.repair(closestDamagedStructure);
+        if (tower.energy < tower.energyCapacity / 2) {
+            let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure: any) => structure.hits < structure.hitsMax
+            });
+            if (closestDamagedStructure) {
+                tower.repair(closestDamagedStructure);
+            }
         }
     }
 
