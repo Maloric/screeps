@@ -1,6 +1,6 @@
-import { Harvest } from '../behaviours/index';
+import { CheckoutEnergy } from '../behaviours/index';
 export class Builder {
-    static run(creep: any) {
+    static run(creep: Creep) {
         if (creep.carry.energy === 0) {
             creep.memory.building = false;
             creep.say('harvesting');
@@ -10,12 +10,12 @@ export class Builder {
         }
 
         if (creep.memory.building && !creep.memory.target) {
-            let buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
+            let buildTargets = <ConstructionSite[]>creep.room.find(FIND_CONSTRUCTION_SITES);
             if (buildTargets.length > 0) {
                 creep.memory.target = buildTargets[0].id;
             } else {
                 console.log(`${creep.name} is repairing`);
-                let repairTargets = creep.room.find(FIND_STRUCTURES, {
+                let repairTargets = <Structure[]>creep.room.find(FIND_STRUCTURES, {
                     filter: (object: any) => object.hits < object.hitsMax
                 });
 
@@ -27,16 +27,16 @@ export class Builder {
                 }
             }
         } else if (creep.memory.building) {
-            let target = Game.getObjectById(creep.memory.target);
+            let target = <any>Game.getObjectById(creep.memory.target);
 
             let res = creep.build(target);
             Builder.resolveBuild(creep, res, target);
         } else {
-            Harvest(creep);
+            CheckoutEnergy(creep);
         }
     }
 
-    static resolveBuild(creep: any, res: number, target: any) {
+    static resolveBuild(creep: Creep, res: number, target: any) {
         switch (res) {
             case ERR_NOT_IN_RANGE:
                 creep.moveTo(target);
@@ -54,7 +54,7 @@ export class Builder {
         }
     }
 
-    static resolveRepair(creep: any, res: number, target: any) {
+    static resolveRepair(creep: Creep, res: number, target: any) {
         switch (res) {
             case ERR_NOT_IN_RANGE:
                 creep.moveTo(target);

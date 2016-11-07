@@ -7,32 +7,37 @@ export class Spawner {
             }
         }
 
-        let blueprints = [{
-            name: 'harvester',
-            capabilities: [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
-            min: 3
-        }, {
+        let blueprints = [
+            {
+                name: 'harvester',
+                capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
+                min: 2
+            }, {
+                name: 'distributor',
+                capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
+                min: 2
+            }, {
                 name: 'builder',
                 capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
                 min: 2
             }, {
                 name: 'upgrader',
-                capabilities: [WORK, CARRY, MOVE],
+                capabilities: [WORK, WORK, WORK, CARRY, MOVE],
                 min: 6
             }, {
                 name: 'archer',
                 capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
                 min: 2
-            },
-            {
+            }, {
                 name: 'serf',
                 capabilities: [WORK, CARRY, MOVE],
                 min: 1
-            }];
+            }
+        ];
 
         for (let i = 0; i < blueprints.length; i++) {
             let blueprint = blueprints[i];
-            let existing = _.filter(Game.creeps, (creep: any) => creep.memory.role === blueprint.name);
+            let existing = _.filter(Game.creeps, (creep: Creep) => creep.memory.role === blueprint.name);
 
             if (existing.length < blueprint.min) {
                 let spawn = Game.spawns['Spawn1'];

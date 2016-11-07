@@ -1,7 +1,7 @@
 export class Archer {
-    static run(creep: any) {
+    static run(creep: Creep) {
         if (!creep.memory.target) {
-            let targets = creep.room.find(FIND_HOSTILE_CREEPS, {
+            let targets = <Creep[]>creep.room.find(FIND_HOSTILE_CREEPS, {
                 filter: (object: any) => {
                     return object.getActiveBodyparts(ATTACK) === 0;
                 }
@@ -19,8 +19,8 @@ export class Archer {
         }
     }
 
-    static attack(creep: any) {
-        let target = Game.getObjectById(creep.memory.target);
+    static attack(creep: Creep) {
+        let target = <Creep>Game.getObjectById(creep.memory.target);
         if (target) {
             let res = creep.rangedAttack(target);
             switch (res) {
@@ -34,7 +34,7 @@ export class Archer {
         }
     }
 
-    static idle(creep: any) {
+    static idle(creep: Creep) {
         creep.moveTo(Game.flags['camp']);
     }
 }

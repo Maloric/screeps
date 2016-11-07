@@ -1,4 +1,4 @@
-import { Harvester, Upgrader, Builder, Archer } from './roles/index';
+import { Harvester, Upgrader, Builder, Archer, Serf, Distributor } from './roles/index';
 import { Spawner } from './spawner';
 
 module.exports.loop = () => {
@@ -25,8 +25,13 @@ module.exports.loop = () => {
         let creep = Game.creeps[name];
         switch (creep.memory.role) {
             case 'harvester':
-            case 'serf':
                 Harvester.run(creep);
+                break;
+            case 'distributor':
+                Distributor.run(creep);
+                break;
+            case 'serf':
+                Serf.run(creep);
                 break;
             case 'upgrader':
                 Upgrader.run(creep);

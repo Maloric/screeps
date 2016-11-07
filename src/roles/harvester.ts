@@ -1,23 +1,26 @@
-import { Harvest } from '../behaviours/index';
 export class Harvester {
-    static run(creep: any) {
-        if (creep.carry.energy < creep.carryCapacity) {
-            Harvest(creep);
-        } else {
-            let targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure: any) => {
-                    return (structure.structureType === STRUCTURE_TOWER
-                        || structure.structureType === STRUCTURE_EXTENSION
-                        || structure.structureType === STRUCTURE_SPAWN
-                        || structure.structureType === STRUCTURE_CONTAINER
-                        || structure.structureType === STRUCTURE_STORAGE) &&
-                        structure.energy < structure.energyCapacity;
-                }
+    static run(creep: Creep) {
+        if (!creep.memory.target) {
+            let sourceIds: string[] = _.map(creep.room.find(FIND_SOURCES), (s: Source) => s.id);
+            let harvestersWithTargets = _.filter(_.values(Game.creeps), (c: Creep) => {
+                return c.memory
+                    && c.memory.role === 'harvester'
+                    && c.memory.target;
             });
-            if (targets.length > 0) {
-                if (creep.transfer(targets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0]);
-                }
+            let targets: string[] = _.map(harvestersWithTargets, (c: Creep) => <string>c.memory.target);
+            let freeTargets = _.difference(sourceIds, targets);
+
+            if (freeTargets && freeTargets.length > 0) {
+                creep.memory.target = <string>freeTargets[0];
+            }
+        }
+
+        if (creep.memory.target) {
+            let target = creep.memory.target;
+            if (creep.harvest(target) === ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            } else {
+                creep.drop(RESOURCE_ENERGY, creep.carry.energy);
             }
         }
     }
