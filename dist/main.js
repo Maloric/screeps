@@ -525,7 +525,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            {
 	                name: 'serf',
 	                capabilities: [WORK, CARRY, MOVE],
-	                min: 3
+	                min: 1
 	            },
 	            {
 	                name: 'harvester',
@@ -534,7 +534,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }, {
 	                name: 'distributor',
 	                capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
-	                min: 2
+	                min: 4
 	            }, {
 	                name: 'builder',
 	                capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
@@ -542,11 +542,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }, {
 	                name: 'upgrader',
 	                capabilities: [WORK, WORK, WORK, CARRY, MOVE],
-	                min: 1
+	                min: 6
 	            }, {
 	                name: 'archer',
 	                capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
-	                min: 2
+	                min: 5
 	            }
 	        ];
 	        for (let i = 0; i < blueprints.length; i++) {
