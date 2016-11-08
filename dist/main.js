@@ -337,11 +337,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            switch (target.structureType) {
 	                case STRUCTURE_SPAWN:
 	                case STRUCTURE_EXTENSION:
-	                    res = target.transferEnergy(creep, creep.carryCapacity - creep.carry.energy);
+	                    res = target.transferEnergy(creep);
 	                    break;
 	                case STRUCTURE_CONTAINER:
 	                case STRUCTURE_STORAGE:
-	                    res = target.transfer(creep, RESOURCE_ENERGY, creep.carryCapacity - creep.carry.energy);
+	                    res = target.transfer(creep, RESOURCE_ENERGY);
 	                    break;
 	            }
 	            if (res === ERR_NOT_IN_RANGE) {
