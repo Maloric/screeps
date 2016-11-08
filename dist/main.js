@@ -285,12 +285,18 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	function Distribute(creep) {
 	    let targets = creep.room.find(FIND_STRUCTURES, {
 	        filter: (structure) => {
-	            return (structure.structureType === STRUCTURE_TOWER
-	                || structure.structureType === STRUCTURE_EXTENSION
-	                || structure.structureType === STRUCTURE_SPAWN
-	                || structure.structureType === STRUCTURE_CONTAINER
-	                || structure.structureType === STRUCTURE_STORAGE) &&
-	                structure.energy < structure.energyCapacity;
+	            switch (structure.structureType) {
+	                case STRUCTURE_TOWER:
+	                case STRUCTURE_EXTENSION:
+	                case STRUCTURE_SPAWN:
+	                case STRUCTURE_CONTAINER:
+	                    return structure.energy < structure.energyCapacity;
+	                case STRUCTURE_STORAGE:
+	                    let s = structure;
+	                    return s.store.energy < s.storeCapacity;
+	                default:
+	                    return false;
+	            }
 	        }
 	    });
 	    if (targets.length > 0) {
@@ -309,12 +315,20 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	function CheckoutEnergy(creep) {
 	    let containersWithEnergy = creep.room.find(FIND_STRUCTURES, {
-	        filter: (x) => (x.structureType === STRUCTURE_STORAGE
-	            && x.store[RESOURCE_ENERGY] > 0)
-	            || (x.structureType === STRUCTURE_CONTAINER
-	                && x.store[RESOURCE_ENERGY] > 0)
-	            || (x.structureType === STRUCTURE_EXTENSION
-	                && x.energy > 0)
+	        filter: (structure) => {
+	            switch (structure.structureType) {
+	                case STRUCTURE_TOWER:
+	                case STRUCTURE_EXTENSION:
+	                case STRUCTURE_SPAWN:
+	                case STRUCTURE_CONTAINER:
+	                    return structure.energy > 0;
+	                case STRUCTURE_STORAGE:
+	                    let s = structure;
+	                    return s.store.energy > 0;
+	                default:
+	                    return false;
+	            }
+	        }
 	    });
 	    if (containersWithEnergy.length > 0) {
 	        let target = creep.pos.findClosestByPath(containersWithEnergy)[0];
@@ -370,7 +384,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    static run(creep) {
 	        if (creep.memory.upgrading && creep.carry.energy === 0) {
 	            creep.memory.upgrading = false;
-	            creep.say('harvesting');
+	            creep.say('getting energy');
 	        }
 	        else if (!creep.memory.upgrading && creep.carry.energy === creep.carryCapacity) {
 	            creep.memory.upgrading = true;
