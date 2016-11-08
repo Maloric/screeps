@@ -4,15 +4,15 @@ import { Spawner } from './spawner';
 module.exports.loop = () => {
     Spawner.autoSpawn();
 
-    let tower: any = Game.getObjectById('5819fe430de1de3555de348d');
+    let tower = <StructureTower>Game.getObjectById('5819fe430de1de3555de348d');
     if (tower) {
-        let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        let closestHostile = <Creep>tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if (closestHostile) {
             tower.attack(closestHostile);
         }
 
-        if (tower.energy < tower.energyCapacity / 2) {
-            let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+        if (tower.energy > tower.energyCapacity / 2) {
+            let closestDamagedStructure = <Structure>tower.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure: any) => structure.hits < structure.hitsMax
             });
             if (closestDamagedStructure) {

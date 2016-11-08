@@ -55,7 +55,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        if (closestHostile) {
 	            tower.attack(closestHostile);
 	        }
-	        if (tower.energy < tower.energyCapacity / 2) {
+	        if (tower.energy > tower.energyCapacity / 2) {
 	            let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
 	                filter: (structure) => structure.hits < structure.hitsMax
 	            });
