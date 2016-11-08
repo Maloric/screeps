@@ -43,7 +43,7 @@ export class Builder {
                 break;
             case ERR_INVALID_TARGET:
                 if (target && target.hits && target.hits < target.hitsMax) {
-                    console.log(`Target has ${target.hits} / ${target.hitsMax} hp`);
+                    // console.log(`Target has ${target.hits} / ${target.hitsMax} hp`);
                     res = creep.repair(target);
                     Builder.resolveRepair(creep, res, target);
                 } else {

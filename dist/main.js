@@ -207,7 +207,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                break;
 	            case ERR_INVALID_TARGET:
 	                if (target && target.hits && target.hits < target.hitsMax) {
-	                    console.log(`Target has ${target.hits} / ${target.hitsMax} hp`);
 	                    res = creep.repair(target);
 	                    Builder.resolveRepair(creep, res, target);
 	                }
@@ -313,25 +312,40 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	function Distribute(creep) {
-	    let targets = creep.room.find(FIND_STRUCTURES, {
-	        filter: (structure) => {
-	            switch (structure.structureType) {
-	                case STRUCTURE_TOWER:
-	                case STRUCTURE_EXTENSION:
-	                case STRUCTURE_SPAWN:
-	                case STRUCTURE_CONTAINER:
-	                    return structure.energy < structure.energyCapacity;
-	                case STRUCTURE_STORAGE:
-	                    let s = structure;
-	                    return s.store.energy < s.storeCapacity;
-	                default:
-	                    return false;
+	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
+	        let targets = creep.room.find(FIND_STRUCTURES, {
+	            filter: (structure) => {
+	                switch (structure.structureType) {
+	                    case STRUCTURE_TOWER:
+	                    case STRUCTURE_EXTENSION:
+	                    case STRUCTURE_SPAWN:
+	                    case STRUCTURE_CONTAINER:
+	                        return structure.energy < structure.energyCapacity;
+	                    case STRUCTURE_STORAGE:
+	                        let s = structure;
+	                        return s.store.energy < s.storeCapacity;
+	                    default:
+	                        return false;
+	                }
+	            }
+	        });
+	        if (targets.length > 0) {
+	            let closest = creep.pos.findClosestByPath(targets);
+	            if (closest) {
+	                creep.memory.target = closest.id;
 	            }
 	        }
-	    });
-	    if (targets.length > 0) {
-	        if (creep.transfer(targets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-	            creep.moveTo(targets[0]);
+	    }
+	    if (creep.memory.target) {
+	        let t = Game.getObjectById(creep.memory.target);
+	        let res = creep.transfer(t, RESOURCE_ENERGY);
+	        switch (res) {
+	            case OK:
+	                delete creep.memory.target;
+	                break;
+	            case ERR_NOT_IN_RANGE:
+	                creep.moveTo(t);
+	                break;
 	        }
 	    }
 	}
