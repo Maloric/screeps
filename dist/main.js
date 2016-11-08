@@ -269,9 +269,39 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	function Recover(creep) {
-	    let target = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
-	    if (creep.pickup(target) === ERR_NOT_IN_RANGE) {
-	        creep.moveTo(target);
+	    if (creep.memory.harvester && creep.carry.energy < creep.carryCapacity) {
+	        let h = Game.creeps[creep.memory.harvester];
+	        if (!h) {
+	            delete creep.memory.harvester;
+	            console.log('Removed stale harvester from ' + creep.name);
+	            return;
+	        }
+	        if (creep.pos.getRangeTo(h) > 1) {
+	            creep.moveTo(h);
+	            return;
+	        }
+	        let droppedEnergy = h.pos.lookFor(LOOK_ENERGY);
+	        if (droppedEnergy.length) {
+	            creep.pickup(droppedEnergy[0]);
+	        }
+	        h.transfer(creep, RESOURCE_ENERGY);
+	    }
+	    else if (!creep.memory.harvester) {
+	        let harvesters = _.filter(Game.creeps, (c) => {
+	            return c.memory.role === 'harvester';
+	        });
+	        if (harvesters.length === 0) {
+	            console.log('No harvesters to assign ' + creep.name + ' to.');
+	            return;
+	        }
+	        let sorted = _.sortBy(harvesters, (h) => {
+	            if (!h.memory.distributors) {
+	                h.memory.distributors = [];
+	            }
+	            return h.memory.distributors.length;
+	        });
+	        creep.memory.harvester = sorted[0].name;
+	        sorted[0].memory.distributors.push(creep.name);
 	    }
 	}
 	exports.Recover = Recover;
@@ -466,6 +496,15 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            if (!Game.creeps[name]) {
 	                delete Memory.creeps[name];
 	                console.log('Clearing non-existing creep memory:', name);
+	            }
+	            else if (Game.creeps[name].memory.role === 'harvester') {
+	                let h = Game.creeps[name];
+	                let newList = _.difference(h.memory.distributors, Object.keys(Game.creeps));
+	                let diff = _.difference(newList, h.memory.distributors);
+	                if (diff.length > 0) {
+	                    h.memory.distributors = newList;
+	                    console.log('Clearing ' + diff.length + ' stale distributors from ' + h.name);
+	                }
 	            }
 	        }
 	        let blueprints = [

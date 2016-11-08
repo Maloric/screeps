@@ -4,6 +4,14 @@ export class Spawner {
             if (!Game.creeps[name]) {
                 delete Memory.creeps[name];
                 console.log('Clearing non-existing creep memory:', name);
+            } else if (Game.creeps[name].memory.role === 'harvester') {
+                let h = Game.creeps[name];
+                let newList = _.difference(h.memory.distributors, Object.keys(Game.creeps));
+                let diff = _.difference(newList, h.memory.distributors);
+                if (diff.length > 0) {
+                    h.memory.distributors = newList;
+                    console.log('Clearing ' + diff.length + ' stale distributors from ' + h.name);
+                }
             }
         }
 
