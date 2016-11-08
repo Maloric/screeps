@@ -23,10 +23,11 @@ export function CheckoutEnergy(creep: Creep): void {
                 case STRUCTURE_SPAWN:
                 case STRUCTURE_EXTENSION:
                     res = target.transferEnergy(creep, creep.carryCapacity - creep.carry.energy);
-
+                    break;
                 case STRUCTURE_CONTAINER:
                 case STRUCTURE_STORAGE:
                     res = target.transfer(creep, RESOURCE_ENERGY, creep.carryCapacity - creep.carry.energy);
+                    break;
             }
 
             if (res === ERR_NOT_IN_RANGE) {
