@@ -17,10 +17,14 @@ export class Harvester {
 
         if (creep.memory.target) {
             let target = creep.memory.target;
-            if (creep.harvest(target) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
-            } else {
-                creep.drop(RESOURCE_ENERGY, creep.carry.energy);
+            let res = creep.harvest(target);
+            switch (res) {
+                case ERR_NOT_IN_RANGE:
+                    creep.moveTo(target);
+                    break;
+                case ERR_INVALID_TARGET:
+                    delete creep.memory.target;
+                    break;
             }
         }
     }

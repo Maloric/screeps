@@ -2,7 +2,6 @@ export function CheckoutEnergy(creep: Creep): void {
     let containersWithEnergy: any[] = creep.room.find(FIND_STRUCTURES, {
         filter: (structure: any) => {
             switch (structure.structureType) {
-                case STRUCTURE_TOWER:
                 case STRUCTURE_EXTENSION:
                 case STRUCTURE_SPAWN:
                 case STRUCTURE_CONTAINER:
