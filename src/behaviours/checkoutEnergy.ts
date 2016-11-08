@@ -16,6 +16,9 @@ export function CheckoutEnergy(creep: Creep): void {
     if (containersWithEnergy.length > 0) {
         if (containersWithEnergy.length > 0) {
             let target = creep.pos.findClosestByPath(containersWithEnergy);
+            if (!target) {
+                return;
+            }
             let res: any;
             switch (target.structureType) {
                 case STRUCTURE_SPAWN:

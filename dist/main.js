@@ -375,6 +375,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    if (containersWithEnergy.length > 0) {
 	        if (containersWithEnergy.length > 0) {
 	            let target = creep.pos.findClosestByPath(containersWithEnergy);
+	            if (!target) {
+	                return;
+	            }
 	            let res;
 	            switch (target.structureType) {
 	                case STRUCTURE_SPAWN:
