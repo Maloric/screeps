@@ -18,7 +18,7 @@ export function CheckoutEnergy(creep: Creep): void {
     if (containersWithEnergy.length > 0) {
         if (containersWithEnergy.length > 0) {
             let target = creep.pos.findClosestByPath(containersWithEnergy);
-            let res: number;
+            let res: any;
             let s: any;
             switch (target.structureType) {
                 case STRUCTURE_SPAWN:
@@ -28,7 +28,6 @@ export function CheckoutEnergy(creep: Creep): void {
                 case STRUCTURE_CONTAINER:
                 case STRUCTURE_STORAGE:
                     res = s.transfer(creep, RESOURCE_ENERGY, creep.carryCapacity - creep.carry.energy);
-                default: return;
             }
 
             if (res === ERR_NOT_IN_RANGE) {
