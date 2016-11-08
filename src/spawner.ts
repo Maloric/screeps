@@ -9,6 +9,11 @@ export class Spawner {
 
         let blueprints = [
             {
+                name: 'serf',
+                capabilities: [WORK, CARRY, MOVE],
+                min: 3
+            },
+            {
                 name: 'harvester',
                 capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
                 min: 2
@@ -23,15 +28,11 @@ export class Spawner {
             }, {
                 name: 'upgrader',
                 capabilities: [WORK, WORK, WORK, CARRY, MOVE],
-                min: 6
+                min: 1
             }, {
                 name: 'archer',
                 capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
                 min: 2
-            }, {
-                name: 'serf',
-                capabilities: [WORK, CARRY, MOVE],
-                min: 1
             }
         ];
 
@@ -48,6 +49,7 @@ export class Spawner {
                     });
                     console.log(`Spawning ${newName}`);
                 }
+                break;
             }
         }
     }

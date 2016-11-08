@@ -472,6 +472,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        }
 	        let blueprints = [
 	            {
+	                name: 'serf',
+	                capabilities: [WORK, CARRY, MOVE],
+	                min: 3
+	            },
+	            {
 	                name: 'harvester',
 	                capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
 	                min: 2
@@ -486,15 +491,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }, {
 	                name: 'upgrader',
 	                capabilities: [WORK, WORK, WORK, CARRY, MOVE],
-	                min: 6
+	                min: 1
 	            }, {
 	                name: 'archer',
 	                capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
 	                min: 2
-	            }, {
-	                name: 'serf',
-	                capabilities: [WORK, CARRY, MOVE],
-	                min: 1
 	            }
 	        ];
 	        for (let i = 0; i < blueprints.length; i++) {
@@ -508,6 +509,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    });
 	                    console.log(`Spawning ${newName}`);
 	                }
+	                break;
 	            }
 	        }
 	    }
