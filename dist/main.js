@@ -334,14 +334,13 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        if (containersWithEnergy.length > 0) {
 	            let target = creep.pos.findClosestByPath(containersWithEnergy);
 	            let res;
-	            let s;
 	            switch (target.structureType) {
 	                case STRUCTURE_SPAWN:
 	                case STRUCTURE_EXTENSION:
 	                    res = target.transferEnergy(creep, creep.carryCapacity - creep.carry.energy);
 	                case STRUCTURE_CONTAINER:
 	                case STRUCTURE_STORAGE:
-	                    res = s.transfer(creep, RESOURCE_ENERGY, creep.carryCapacity - creep.carry.energy);
+	                    res = target.transfer(creep, RESOURCE_ENERGY, creep.carryCapacity - creep.carry.energy);
 	            }
 	            if (res === ERR_NOT_IN_RANGE) {
 	                console.log("moving to pick up energy");
