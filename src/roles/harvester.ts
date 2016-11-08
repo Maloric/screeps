@@ -16,7 +16,7 @@ export class Harvester {
         }
 
         if (creep.memory.target) {
-            let target = creep.memory.target;
+            let target = <Source>Game.getObjectById(creep.memory.target);
             let res = creep.harvest(target);
             switch (res) {
                 case ERR_NOT_IN_RANGE:

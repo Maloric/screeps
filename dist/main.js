@@ -322,8 +322,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                case STRUCTURE_CONTAINER:
 	                    return structure.energy > 0;
 	                case STRUCTURE_STORAGE:
-	                    let s = structure;
-	                    return s.store.energy > 0;
+	                    return structure.store.energy > 0;
 	                default:
 	                    return false;
 	            }
@@ -344,7 +343,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	            }
 	            if (res === ERR_NOT_IN_RANGE) {
-	                console.log("moving to pick up energy");
 	                creep.moveTo(target);
 	            }
 	        }
@@ -374,7 +372,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	        if (creep.memory.target) {
-	            let target = creep.memory.target;
+	            let target = Game.getObjectById(creep.memory.target);
 	            let res = creep.harvest(target);
 	            switch (res) {
 	                case ERR_NOT_IN_RANGE:

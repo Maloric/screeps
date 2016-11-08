@@ -7,8 +7,7 @@ export function CheckoutEnergy(creep: Creep): void {
                 case STRUCTURE_CONTAINER:
                     return structure.energy > 0;
                 case STRUCTURE_STORAGE:
-                    let s = <StructureStorage>structure;
-                    return s.store.energy > 0;
+                    return structure.store.energy > 0;
                 default:
                     return false;
             }
@@ -30,7 +29,6 @@ export function CheckoutEnergy(creep: Creep): void {
             }
 
             if (res === ERR_NOT_IN_RANGE) {
-                console.log("moving to pick up energy");
                 creep.moveTo(target);
             }
         }
