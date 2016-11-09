@@ -64,9 +64,15 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }
+	    let creepRoster = {};
 	    for (let name in Game.creeps) {
 	        let creep = Game.creeps[name];
-	        switch (creep.memory.role) {
+	        let role = creep.memory.role;
+	        if (!creepRoster[role]) {
+	            creepRoster[role] = [];
+	        }
+	        creepRoster[role].push(creep.name);
+	        switch (role) {
 	            case 'harvester':
 	                index_1.Harvester.run(creep);
 	                break;
@@ -165,11 +171,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    static run(creep) {
 	        if (creep.carry.energy === 0) {
 	            creep.memory.building = false;
-	            creep.say('harvesting');
+	            creep.say('Collecting');
 	        }
 	        else if (creep.carry.energy === creep.carryCapacity) {
 	            creep.memory.building = true;
-	            creep.say('building');
+	            creep.say('Building');
 	        }
 	        if (creep.memory.building && !creep.memory.target) {
 	            let buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
@@ -177,7 +183,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                creep.memory.target = buildTargets[0].id;
 	            }
 	            else {
-	                console.log(`${creep.name} is repairing`);
 	                let repairTargets = creep.room.find(FIND_STRUCTURES, {
 	                    filter: (object) => object.hits < object.hitsMax
 	                });
@@ -210,7 +215,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    Builder.resolveRepair(creep, res, target);
 	                }
 	                else {
-	                    creep.say('Build finished.');
 	                    delete creep.memory.target;
 	                }
 	                break;
@@ -317,6 +321,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                switch (structure.structureType) {
 	                    case STRUCTURE_TOWER:
 	                    case STRUCTURE_EXTENSION:
+	                    case STRUCTURE_SPAWN:
 	                    case STRUCTURE_CONTAINER:
 	                        return structure.energy < structure.energyCapacity;
 	                    case STRUCTURE_STORAGE:

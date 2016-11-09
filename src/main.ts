@@ -21,9 +21,15 @@ module.exports.loop = () => {
         }
     }
 
+    let creepRoster: any = {};
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
-        switch (creep.memory.role) {
+        let role = creep.memory.role;
+        if (!creepRoster[role]) {
+            creepRoster[role] = [];
+        }
+        creepRoster[role].push(creep.name);
+        switch (role) {
             case 'harvester':
                 Harvester.run(creep);
                 break;

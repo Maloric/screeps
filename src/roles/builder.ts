@@ -3,10 +3,10 @@ export class Builder {
     static run(creep: Creep) {
         if (creep.carry.energy === 0) {
             creep.memory.building = false;
-            creep.say('harvesting');
+            creep.say('Collecting');
         } else if (creep.carry.energy === creep.carryCapacity) {
             creep.memory.building = true;
-            creep.say('building');
+            creep.say('Building');
         }
 
         if (creep.memory.building && !creep.memory.target) {
@@ -14,7 +14,7 @@ export class Builder {
             if (buildTargets.length > 0) {
                 creep.memory.target = buildTargets[0].id;
             } else {
-                console.log(`${creep.name} is repairing`);
+                // console.log(`${creep.name} is repairing`);
                 let repairTargets = <Structure[]>creep.room.find(FIND_STRUCTURES, {
                     filter: (object: any) => object.hits < object.hitsMax
                 });
@@ -47,7 +47,7 @@ export class Builder {
                     res = creep.repair(target);
                     Builder.resolveRepair(creep, res, target);
                 } else {
-                    creep.say('Build finished.');
+                    // creep.say('Build finished.');
                     delete creep.memory.target;
                 }
                 break;
