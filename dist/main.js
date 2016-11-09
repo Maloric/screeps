@@ -329,7 +329,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        });
 	        if (targets.length > 0) {
 	            let tower = _.find(targets, (s) => {
-	                return s.structureType = STRUCTURE_TOWER
+	                return s.structureType === STRUCTURE_TOWER
 	                    && s.energy < s.energyCapacity / 1.2;
 	            });
 	            if (tower) {
