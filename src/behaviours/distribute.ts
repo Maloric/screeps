@@ -19,7 +19,7 @@ export function Distribute(creep: Creep) {
         if (targets.length > 0) {
             let tower = _.find(targets, (s: any) => {
                 return s.structureType === STRUCTURE_TOWER
-                    && s.energy < s.energyCapacity / 1.2;
+                    && s.energy < s.energyCapacity * 0.85;
             });
 
             if (tower) {
