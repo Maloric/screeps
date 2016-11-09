@@ -526,11 +526,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        }
 	        let blueprints = [
 	            {
-	                name: 'serf',
-	                capabilities: [WORK, CARRY, MOVE],
-	                min: 1
-	            },
-	            {
 	                name: 'harvester',
 	                capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
 	                min: 2
@@ -552,6 +547,15 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                min: 5
 	            }
 	        ];
+	        if (Object.keys(Game.creeps).length === 0) {
+	            blueprints = [
+	                {
+	                    name: 'serf',
+	                    capabilities: [WORK, CARRY, MOVE],
+	                    min: 1
+	                }
+	            ];
+	        }
 	        for (let i = 0; i < blueprints.length; i++) {
 	            let blueprint = blueprints[i];
 	            let existing = _.filter(Game.creeps, (creep) => creep.memory.role === blueprint.name);

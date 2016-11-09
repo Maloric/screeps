@@ -17,11 +17,6 @@ export class Spawner {
 
         let blueprints = [
             {
-                name: 'serf',
-                capabilities: [WORK, CARRY, MOVE],
-                min: 1
-            },
-            {
                 name: 'harvester',
                 capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
                 min: 2
@@ -43,6 +38,16 @@ export class Spawner {
                 min: 5
             }
         ];
+
+        if (Object.keys(Game.creeps).length === 0) {
+            blueprints = [
+                {
+                    name: 'serf',
+                    capabilities: [WORK, CARRY, MOVE],
+                    min: 1
+                }
+            ];
+        }
 
         for (let i = 0; i < blueprints.length; i++) {
             let blueprint = blueprints[i];
