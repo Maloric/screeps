@@ -55,7 +55,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        if (closestHostile) {
 	            tower.attack(closestHostile);
 	        }
-	        if (tower.energy > tower.energyCapacity / 2) {
+	        if (tower.energy > tower.energyCapacity / 1.2) {
 	            let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
 	                filter: (structure) => structure.hits < structure.hitsMax
 	            });
@@ -317,12 +317,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                switch (structure.structureType) {
 	                    case STRUCTURE_TOWER:
 	                    case STRUCTURE_EXTENSION:
-	                    case STRUCTURE_SPAWN:
-	                    case STRUCTURE_CONTAINER:
 	                        return structure.energy < structure.energyCapacity;
-	                    case STRUCTURE_STORAGE:
-	                        let s = structure;
-	                        return s.store.energy < s.storeCapacity;
 	                    default:
 	                        return false;
 	                }
@@ -526,7 +521,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }, {
 	                name: 'builder',
 	                capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-	                min: 2
+	                min: 0
 	            }, {
 	                name: 'upgrader',
 	                capabilities: [WORK, WORK, WORK, CARRY, MOVE],
@@ -534,7 +529,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }, {
 	                name: 'archer',
 	                capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
-	                min: 5
+	                min: 0
 	            }
 	        ];
 	        if (Object.keys(Game.creeps).length === 0) {

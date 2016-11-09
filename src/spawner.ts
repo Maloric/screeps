@@ -27,7 +27,7 @@ export class Spawner {
             }, {
                 name: 'builder',
                 capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-                min: 2
+                min: 0
             }, {
                 name: 'upgrader',
                 capabilities: [WORK, WORK, WORK, CARRY, MOVE],
@@ -35,7 +35,7 @@ export class Spawner {
             }, {
                 name: 'archer',
                 capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
-                min: 5
+                min: 0
             }
         ];
 

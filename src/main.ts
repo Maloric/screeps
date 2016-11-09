@@ -11,7 +11,7 @@ module.exports.loop = () => {
             tower.attack(closestHostile);
         }
 
-        if (tower.energy > tower.energyCapacity / 2) {
+        if (tower.energy > tower.energyCapacity / 1.2) {
             let closestDamagedStructure = <Structure>tower.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure: any) => structure.hits < structure.hitsMax
             });
