@@ -19,11 +19,19 @@ export class Spawner {
             {
                 name: 'harvester',
                 capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
-                min: 2
+                min: 1
             }, {
                 name: 'distributor',
                 capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
-                min: 3
+                min: 1
+            }, {
+                name: 'harvester',
+                capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
+                min: 1
+            }, {
+                name: 'distributor',
+                capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
+                min: 1
             }, {
                 name: 'builder',
                 capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
