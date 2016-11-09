@@ -342,7 +342,15 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                creep.memory.target = tower.id;
 	            }
 	            else {
-	                let closest = creep.pos.findClosestByPath(targets);
+	                let secondaryTargets = _.filter(targets, (s) => {
+	                    return s.structureType === STRUCTURE_STORAGE
+	                        && s.storage.energy < 500;
+	                });
+	                let primaryTargets = _.difference(targets, secondaryTargets);
+	                let closest = creep.pos.findClosestByPath(primaryTargets);
+	                if (!closest) {
+	                    closest = creep.pos.findClosestByPath(secondaryTargets);
+	                }
 	                if (closest) {
 	                    creep.memory.target = closest.id;
 	                }

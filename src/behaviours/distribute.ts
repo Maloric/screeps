@@ -17,6 +17,7 @@ export function Distribute(creep: Creep) {
             }
         });
         if (targets.length > 0) {
+            // Tower should have minimum 850 energy first
             let tower = _.find(targets, (s: any) => {
                 return s.structureType === STRUCTURE_TOWER
                     && s.energy < s.energyCapacity * 0.85;
@@ -25,7 +26,16 @@ export function Distribute(creep: Creep) {
             if (tower) {
                 creep.memory.target = tower.id;
             } else {
-                let closest = creep.pos.findClosestByPath(targets);
+                // Only fill storage above 500 if there are no other valid targets
+                let secondaryTargets = _.filter(targets, (s: any) => {
+                    return s.structureType === STRUCTURE_STORAGE
+                        && s.storage.energy < 500;
+                });
+                let primaryTargets = _.difference(targets, secondaryTargets);
+                let closest = creep.pos.findClosestByPath(primaryTargets);
+                if (!closest) {
+                    closest = creep.pos.findClosestByPath(secondaryTargets);
+                }
                 if (closest) {
                     creep.memory.target = closest.id;
                 }
