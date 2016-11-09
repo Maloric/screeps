@@ -2,8 +2,6 @@ import { Harvester, Upgrader, Builder, Archer, Serf, Distributor } from './roles
 import { Spawner } from './spawner';
 
 module.exports.loop = () => {
-    Spawner.autoSpawn();
-
     let tower = <StructureTower>Game.getObjectById('5819fe430de1de3555de348d');
     if (tower) {
         let closestHostile = <Creep>tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
@@ -53,4 +51,5 @@ module.exports.loop = () => {
         }
     }
     Memory['roster'] = creepRoster;
+    Spawner.autoSpawn();
 };

@@ -18,60 +18,139 @@ export class Spawner {
         let blueprints = [
             {
                 name: 'harvester',
-                capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
-                min: 1
+                min: 1,
+                max: 2,
+                tiers: [
+                    {
+                        cost: 600,
+                        capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
+                    },
+                    {
+                        cost: 400,
+                        capabilities: [WORK, WORK, WORK, CARRY, MOVE],
+                    },
+                    {
+                        cost: 200,
+                        capabilities: [WORK, CARRY, MOVE],
+                    }
+                ]
             }, {
                 name: 'distributor',
-                capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
-                min: 1
-            }, {
-                name: 'harvester',
-                capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
-                min: 1
-            }, {
-                name: 'distributor',
-                capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
-                min: 1
+                min: 1,
+                max: 4,
+                tiers: [
+                    {
+                        cost: 300,
+                        capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
+                    },
+                    {
+                        cost: 150,
+                        capabilities: [CARRY, CARRY, MOVE],
+                    }
+                ]
             }, {
                 name: 'builder',
-                capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-                min: 2
+                min: 0,
+                max: 4,
+                tiers: [
+                    {
+                        cost: 400,
+                        capabilities: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+                    },
+                    {
+                        cost: 200,
+                        capabilities: [WORK, CARRY, MOVE],
+                    }
+                ]
             }, {
                 name: 'upgrader',
-                capabilities: [WORK, WORK, WORK, CARRY, MOVE],
-                min: 3
+                min: 1,
+                max: 6,
+                tiers: [
+                    {
+                        cost: 400,
+                        capabilities: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+                    },
+                    {
+                        cost: 200,
+                        capabilities: [WORK, CARRY, MOVE],
+                    }
+                ]
             }, {
                 name: 'archer',
-                capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
-                min: 0
+                min: 0,
+                max: 2,
+                tiers: [
+                    {
+                        cost: 350,
+                        capabilities: [RANGED_ATTACK, RANGED_ATTACK, MOVE],
+                    }
+                ]
             }
         ];
 
         if (Object.keys(Game.creeps).length === 0) {
+            // Spawn a single serf if there are no other creeps
             blueprints = [
                 {
                     name: 'serf',
-                    capabilities: [WORK, CARRY, MOVE],
-                    min: 1
+                    min: 1,
+                    max: 1,
+                    tiers: [
+                        {
+                            cost: 200,
+                            capabilities: [WORK, CARRY, MOVE],
+                        }
+                    ]
                 }
             ];
+        } else if (Memory['roster']['serf']
+            && Memory['roster']['serf'].length > 0
+            && Memory['roster']['harvester']
+            && Memory['roster']['harvester'].length > 0) {
+            // Once there is at least one harvester, turn any serfs into distributors
+            _.each(Memory['roster']['serf'], (serfName) => {
+                Game.creeps[serfName].memory.role = 'distributor';
+            });
         }
 
+        if (Spawner.fulfillCreepOrders(blueprints, 'min')) {
+            console.log('Minimum creep order fulfilled.');
+            if (Spawner.fulfillCreepOrders(blueprints, 'max')) {
+                console.log('Maximum creep order fulfilled.');
+            }
+        };
+    }
+
+    static fulfillCreepOrders(blueprints: any, type: 'min' | 'max'): boolean {
+        let fulfilled = true;
         for (let i = 0; i < blueprints.length; i++) {
             let blueprint = blueprints[i];
-            let existing = _.filter(Game.creeps, (creep: Creep) => creep.memory.role === blueprint.name);
+            let existing = Memory['roster'][blueprint.name];
 
-            if (existing.length < blueprint.min) {
+            if (existing.length < blueprint[type]) {
                 let spawn = Game.spawns['Spawn1'];
-
-                if (spawn.canCreateCreep(blueprint.capabilities) === OK) {
-                    let newName = spawn.createCreep(blueprint.capabilities, undefined, {
-                        role: blueprint.name
-                    });
-                    console.log(`Spawning ${newName}`);
+                for (let i = 0; i < blueprint.tiers.length; i++) {
+                    if (Spawner.tryCreateCreep(spawn, blueprint, i)) {
+                        break;
+                    };
                 }
+                fulfilled = false;
                 break;
             }
         }
+        return fulfilled;
+    }
+
+    static tryCreateCreep(spawn: StructureSpawn, blueprint: any, tierIndex: number): boolean {
+        let tier = blueprint.tiers[tierIndex];
+        if (spawn.canCreateCreep(tier.capabilities) === OK) {
+            let newName = spawn.createCreep(tier.capabilities, undefined, {
+                role: blueprint.name
+            });
+            console.log(`Spawning ${newName}`);
+            return true;
+        }
+        return false;
     }
 }
