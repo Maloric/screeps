@@ -646,7 +646,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        for (let i = 0; i < blueprints.length; i++) {
 	            let blueprint = blueprints[i];
 	            let existing = Memory['roster'][blueprint.name];
-	            if (existing.length < blueprint[type]) {
+	            if ((!existing && blueprint[type] > 0) || (existing && existing.length < blueprint[type])) {
 	                let spawn = Game.spawns['Spawn1'];
 	                for (let i = 0; i < blueprint.tiers.length; i++) {
 	                    if (Spawner.tryCreateCreep(spawn, blueprint, i)) {
