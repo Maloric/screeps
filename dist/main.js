@@ -95,6 +95,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);
 	        }
 	    }
+	    Memory['roster'] = creepRoster;
 	};
 
 

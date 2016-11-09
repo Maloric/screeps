@@ -52,4 +52,5 @@ module.exports.loop = () => {
                 console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);
         }
     }
+    Memory['roster'] = creepRoster;
 };
