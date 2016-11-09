@@ -29,7 +29,7 @@ export function Distribute(creep: Creep) {
                 // Only fill storage above 500 if there are no other valid targets
                 let secondaryTargets = _.filter(targets, (s: any) => {
                     return s.structureType === STRUCTURE_STORAGE
-                        && s.storage.energy < 500;
+                        && s.store.energy < 500;
                 });
                 let primaryTargets = _.difference(targets, secondaryTargets);
                 let closest = creep.pos.findClosestByPath(primaryTargets);

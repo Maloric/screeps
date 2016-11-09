@@ -344,7 +344,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            else {
 	                let secondaryTargets = _.filter(targets, (s) => {
 	                    return s.structureType === STRUCTURE_STORAGE
-	                        && s.storage.energy < 500;
+	                        && s.store.energy < 500;
 	                });
 	                let primaryTargets = _.difference(targets, secondaryTargets);
 	                let closest = creep.pos.findClosestByPath(primaryTargets);
