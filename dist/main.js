@@ -278,7 +278,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            creep.moveTo(h);
 	            return;
 	        }
-	        let droppedEnergy = h.pos.lookFor(LOOK_ENERGY);
+	        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 1);
 	        if (droppedEnergy.length) {
 	            creep.pickup(droppedEnergy[0]);
 	        }

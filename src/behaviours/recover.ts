@@ -12,7 +12,7 @@ export function Recover(creep: Creep) {
             return;
         }
 
-        let droppedEnergy = h.pos.lookFor(LOOK_ENERGY);
+        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 1);
         if (droppedEnergy.length) {
             creep.pickup(<Resource>droppedEnergy[0]);
         }
