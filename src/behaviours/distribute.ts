@@ -5,21 +5,30 @@ export function Distribute(creep: Creep) {
                 switch (structure.structureType) {
                     case STRUCTURE_TOWER:
                     case STRUCTURE_EXTENSION:
-                        // case STRUCTURE_SPAWN:
-                        // case STRUCTURE_CONTAINER:
+                    // case STRUCTURE_SPAWN:
+                    case STRUCTURE_CONTAINER:
                         return structure.energy < structure.energyCapacity;
-                    // case STRUCTURE_STORAGE:
-                    // let s = <StructureStorage>structure;
-                    // return s.store.energy < s.storeCapacity;
+                    case STRUCTURE_STORAGE:
+                        let s = <StructureStorage>structure;
+                        return s.store.energy < s.storeCapacity;
                     default:
                         return false;
                 }
             }
         });
         if (targets.length > 0) {
-            let closest = creep.pos.findClosestByPath(targets);
-            if (closest) {
-                creep.memory.target = closest.id;
+            let tower = _.find(targets, (s: any) => {
+                return s.structureType = STRUCTURE_TOWER
+                    && s.energy < s.energyCapacity / 1.2;
+            });
+
+            if (tower) {
+                creep.memory.target = tower.id;
+            } else {
+                let closest = creep.pos.findClosestByPath(targets);
+                if (closest) {
+                    creep.memory.target = closest.id;
+                }
             }
         }
     }

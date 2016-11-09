@@ -252,7 +252,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	function Harvest(creep) {
-	    let target = creep.room.find(FIND_SOURCES)[1];
+	    let target = creep.pos.findClosestByPath(FIND_SOURCES);
 	    if (creep.harvest(target) === ERR_NOT_IN_RANGE) {
 	        creep.moveTo(target);
 	    }
@@ -317,16 +317,29 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                switch (structure.structureType) {
 	                    case STRUCTURE_TOWER:
 	                    case STRUCTURE_EXTENSION:
+	                    case STRUCTURE_CONTAINER:
 	                        return structure.energy < structure.energyCapacity;
+	                    case STRUCTURE_STORAGE:
+	                        let s = structure;
+	                        return s.store.energy < s.storeCapacity;
 	                    default:
 	                        return false;
 	                }
 	            }
 	        });
 	        if (targets.length > 0) {
-	            let closest = creep.pos.findClosestByPath(targets);
-	            if (closest) {
-	                creep.memory.target = closest.id;
+	            let tower = _.find(targets, (s) => {
+	                return s.structureType = STRUCTURE_TOWER
+	                    && s.energy < s.energyCapacity / 1.2;
+	            });
+	            if (tower) {
+	                creep.memory.target = tower.id;
+	            }
+	            else {
+	                let closest = creep.pos.findClosestByPath(targets);
+	                if (closest) {
+	                    creep.memory.target = closest.id;
+	                }
 	            }
 	        }
 	    }
@@ -400,8 +413,17 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	class Harvester {
 	    static run(creep) {
 	        if (!creep.memory.target) {
-	            let target = creep.room.find(FIND_SOURCES)[1];
-	            creep.memory.target = target.id;
+	            let sourceIds = _.map(creep.room.find(FIND_SOURCES), (s) => s.id);
+	            let harvestersWithTargets = _.filter(_.values(Game.creeps), (c) => {
+	                return c.memory
+	                    && c.memory.role === 'harvester'
+	                    && c.memory.target;
+	            });
+	            let targets = _.map(harvestersWithTargets, (c) => c.memory.target);
+	            let freeTargets = _.difference(sourceIds, targets);
+	            if (freeTargets && freeTargets.length > 0) {
+	                creep.memory.target = freeTargets[0];
+	            }
 	        }
 	        if (creep.memory.target) {
 	            let target = Game.getObjectById(creep.memory.target);
@@ -513,7 +535,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            {
 	                name: 'harvester',
 	                capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
-	                min: 1
+	                min: 2
 	            }, {
 	                name: 'distributor',
 	                capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
@@ -521,11 +543,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }, {
 	                name: 'builder',
 	                capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-	                min: 0
+	                min: 2
 	            }, {
 	                name: 'upgrader',
 	                capabilities: [WORK, WORK, WORK, CARRY, MOVE],
-	                min: 1
+	                min: 3
 	            }, {
 	                name: 'archer',
 	                capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
