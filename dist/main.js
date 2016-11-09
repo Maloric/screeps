@@ -634,7 +634,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 	        if (Spawner.fulfillCreepOrders(blueprints, 'min')) {
-	            console.log('Minimum creep order fulfilled.');
 	            if (Spawner.fulfillCreepOrders(blueprints, 'max')) {
 	                console.log('Maximum creep order fulfilled.');
 	            }
