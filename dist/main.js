@@ -283,28 +283,27 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            creep.moveTo(h);
 	            return;
 	        }
-	        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 1);
+	        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 3);
 	        if (droppedEnergy.length) {
 	            creep.pickup(droppedEnergy[0]);
 	        }
 	        h.transfer(creep, RESOURCE_ENERGY);
 	    }
 	    else if (!creep.memory.harvester) {
-	        let harvesters = _.filter(Game.creeps, (c) => {
-	            return c.memory.role === 'harvester';
-	        });
-	        if (harvesters.length === 0) {
+	        let harvesters = Memory['roster']['harvester'];
+	        if (!harvesters || harvesters.length === 0) {
 	            console.log('No harvesters to assign ' + creep.name + ' to.');
 	            return;
 	        }
 	        let sorted = _.sortBy(harvesters, (h) => {
-	            if (!h.memory.distributors) {
-	                h.memory.distributors = [];
+	            let harvester = Game.creeps[h];
+	            if (!harvester.memory.distributors) {
+	                harvester.memory.distributors = [];
 	            }
-	            return h.memory.distributors.length;
+	            return harvester.memory.distributors.length;
 	        });
-	        creep.memory.harvester = sorted[0].name;
-	        sorted[0].memory.distributors.push(creep.name);
+	        creep.memory.harvester = sorted[0];
+	        Game.creeps[sorted[0]].memory.distributors.push(creep.name);
 	    }
 	}
 	exports.Recover = Recover;

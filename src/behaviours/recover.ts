@@ -12,30 +12,28 @@ export function Recover(creep: Creep) {
             return;
         }
 
-        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 1);
+        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 3);
         if (droppedEnergy.length) {
             creep.pickup(<Resource>droppedEnergy[0]);
         }
 
         h.transfer(creep, RESOURCE_ENERGY);
     } else if (!creep.memory.harvester) {
-        let harvesters = _.filter(Game.creeps, (c: Creep) => {
-            return c.memory.role === 'harvester';
-        });
-
-        if (harvesters.length === 0) {
+        let harvesters: string[] = Memory['roster']['harvester'];
+        if (!harvesters || harvesters.length === 0) {
             console.log('No harvesters to assign ' + creep.name + ' to.');
             return;
         }
 
-        let sorted = _.sortBy(harvesters, (h: Creep) => {
-            if (!h.memory.distributors) {
-                h.memory.distributors = [];
+        let sorted = _.sortBy(harvesters, (h: string) => {
+            let harvester = Game.creeps[h];
+            if (!harvester.memory.distributors) {
+                harvester.memory.distributors = [];
             }
-            return h.memory.distributors.length;
+            return harvester.memory.distributors.length;
         });
 
-        creep.memory.harvester = sorted[0].name;
-        sorted[0].memory.distributors.push(creep.name);
+        creep.memory.harvester = sorted[0];
+        Game.creeps[sorted[0]].memory.distributors.push(creep.name);
     }
 }
