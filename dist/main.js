@@ -252,7 +252,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	function Harvest(creep) {
-	    let target = creep.pos.findClosestByPath(FIND_SOURCES);
+	    let target = creep.room.find(FIND_SOURCES)[1];
 	    if (creep.harvest(target) === ERR_NOT_IN_RANGE) {
 	        creep.moveTo(target);
 	    }
@@ -405,17 +405,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	class Harvester {
 	    static run(creep) {
 	        if (!creep.memory.target) {
-	            let sourceIds = _.map(creep.room.find(FIND_SOURCES), (s) => s.id);
-	            let harvestersWithTargets = _.filter(_.values(Game.creeps), (c) => {
-	                return c.memory
-	                    && c.memory.role === 'harvester'
-	                    && c.memory.target;
-	            });
-	            let targets = _.map(harvestersWithTargets, (c) => c.memory.target);
-	            let freeTargets = _.difference(sourceIds, targets);
-	            if (freeTargets && freeTargets.length > 0) {
-	                creep.memory.target = freeTargets[0];
-	            }
+	            let target = creep.room.find(FIND_SOURCES)[1];
+	            creep.memory.target = target.id;
 	        }
 	        if (creep.memory.target) {
 	            let target = Game.getObjectById(creep.memory.target);
@@ -527,11 +518,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            {
 	                name: 'harvester',
 	                capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
-	                min: 2
+	                min: 1
 	            }, {
 	                name: 'distributor',
 	                capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
-	                min: 4
+	                min: 3
 	            }, {
 	                name: 'builder',
 	                capabilities: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
@@ -539,7 +530,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }, {
 	                name: 'upgrader',
 	                capabilities: [WORK, WORK, WORK, CARRY, MOVE],
-	                min: 6
+	                min: 1
 	            }, {
 	                name: 'archer',
 	                capabilities: [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE],
