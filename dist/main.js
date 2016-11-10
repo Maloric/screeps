@@ -568,7 +568,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                        cost: 200,
 	                        capabilities: [WORK, CARRY, MOVE],
 	                    }
-	                ]
+	                ],
+	                memory: {
+	                    distributors: []
+	                }
 	            }, {
 	                name: 'distributor',
 	                min: 1,
@@ -675,9 +678,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    static tryCreateCreep(spawn, blueprint, tierIndex) {
 	        let tier = blueprint.tiers[tierIndex];
 	        if (spawn.canCreateCreep(tier.capabilities) === OK) {
-	            let newName = spawn.createCreep(tier.capabilities, undefined, {
+	            let newName = spawn.createCreep(tier.capabilities, undefined, _.merge(blueprint.memory, {
 	                role: blueprint.name
-	            });
+	            }));
 	            console.log(`Spawning ${newName}`);
 	            return true;
 	        }
