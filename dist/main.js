@@ -48,6 +48,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	const index_1 = __webpack_require__(1);
 	const spawner_1 = __webpack_require__(13);
 	module.exports.loop = () => {
+	    spawner_1.Spawner.cleanup();
 	    let tower = Game.getObjectById('5819fe430de1de3555de348d');
 	    if (tower) {
 	        let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
@@ -534,7 +535,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	class Spawner {
-	    static autoSpawn() {
+	    static cleanup() {
 	        for (let name in Memory.creeps) {
 	            if (!Game.creeps[name]) {
 	                delete Memory.creeps[name];
@@ -550,6 +551,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	        }
+	    }
+	    static autoSpawn() {
 	        let blueprints = [
 	            {
 	                name: 'harvester',

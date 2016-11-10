@@ -1,5 +1,5 @@
 export class Spawner {
-    static autoSpawn(): void {
+    static cleanup(): void {
         for (let name in Memory.creeps) {
             if (!Game.creeps[name]) {
                 delete Memory.creeps[name];
@@ -14,7 +14,9 @@ export class Spawner {
                 }
             }
         }
+    }
 
+    static autoSpawn(): void {
         let blueprints = [
             {
                 name: 'harvester',
