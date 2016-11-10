@@ -288,13 +288,17 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            console.log('Removed stale harvester from ' + creep.name);
 	            return;
 	        }
-	        if (creep.pos.getRangeTo(h) > 1) {
-	            creep.moveTo(h);
-	            return;
-	        }
-	        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 3);
+	        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 10);
 	        if (droppedEnergy.length) {
-	            creep.pickup(droppedEnergy[0]);
+	            if (creep.pickup(droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
+	                creep.moveTo(droppedEnergy[0]);
+	            }
+	        }
+	        else {
+	            if (creep.pos.getRangeTo(h) > 1) {
+	                creep.moveTo(h);
+	                return;
+	            }
 	        }
 	        h.transfer(creep, RESOURCE_ENERGY);
 	    }
