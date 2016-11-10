@@ -5,7 +5,8 @@ export function Recover(creep: Creep) {
     let greedyHarvesters = _.filter(harvesters, (h) => Game.creeps[h].memory['distributors'].length > 1);
 
     if (needyHarvesters.length > 0 && greedyHarvesters.length > 0) {
-        let reassigned = Game.creeps[greedyHarvesters[0]].memory.distributors.pop();
+        let surplus: string[] = Game.creeps[greedyHarvesters[0]].memory.distributors;
+        let reassigned: string = _.takeRight(surplus)[0];
         delete Game.creeps[reassigned].memory.harvester;
     }
 
