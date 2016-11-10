@@ -557,7 +557,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                let closest = creep.pos.findClosestByRange(damagedArchers);
 	                creep.memory.target = closest.id;
 	            }
-	            else {
+	            else if (damagedCreeps.length > 0) {
 	                let closest = creep.pos.findClosestByRange(damagedCreeps);
 	                creep.memory.target = closest.id;
 	            }

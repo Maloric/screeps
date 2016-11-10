@@ -12,7 +12,7 @@ export class Healer {
             if (damagedArchers.length > 0) {
                 let closest = <Creep>creep.pos.findClosestByRange(damagedArchers);
                 creep.memory.target = closest.id;
-            } else {
+            } else if (damagedCreeps.length > 0) {
                 let closest = <Creep>creep.pos.findClosestByRange(damagedCreeps);
                 creep.memory.target = closest.id;
             }
