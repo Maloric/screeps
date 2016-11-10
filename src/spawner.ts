@@ -28,14 +28,6 @@ export class Spawner {
                     {
                         cost: 600,
                         capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
-                    },
-                    {
-                        cost: 400,
-                        capabilities: [WORK, WORK, WORK, CARRY, MOVE],
-                    },
-                    {
-                        cost: 200,
-                        capabilities: [WORK, CARRY, MOVE],
                     }
                 ],
                 memory: {
@@ -96,13 +88,16 @@ export class Spawner {
             }
         ];
 
-        if (Object.keys(Game.creeps).length === 0) {
-            // Spawn a single serf if there are no other creeps
+        if ((!Memory['roster']['harvester']
+            || Memory['roster']['harvester'].length === 0)
+            && !Game.spawns['Spawn1'].canCreateCreep(blueprints[0].tiers[0].capabilities)
+        ) {
+            // Spawn up to three serfs if there are no harvesters and not enough to create one
             blueprints = [
                 {
                     name: 'serf',
                     min: 1,
-                    max: 1,
+                    max: 3,
                     tiers: [
                         {
                             cost: 200,
