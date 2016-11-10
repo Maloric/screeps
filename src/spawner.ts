@@ -2,6 +2,8 @@ export class Spawner {
     static cleanup(): void {
         for (let name in Memory.creeps) {
             if (!Game.creeps[name]) {
+                let role = Memory.creeps[name].role;
+                Memory['roster'][role] = _.reject(Memory['roster'][role], (c) => c === name);
                 delete Memory.creeps[name];
                 console.log('Clearing non-existing creep memory:', name);
             } else if (Game.creeps[name].memory.role === 'harvester') {
