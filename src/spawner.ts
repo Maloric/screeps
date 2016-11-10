@@ -138,6 +138,44 @@ export class Spawner {
                         ]
                     }
                 ]
+            }, {
+                name: 'healer',
+                min: 0,
+                max: 2,
+                tiers: [
+                    {
+                        cost: 1120,
+                        capabilities: [
+                            TOUGH, TOUGH,
+                            MOVE, MOVE,
+                            HEAL, HEAL, HEAL, HEAL
+                        ]
+                    },
+                    {
+                        cost: 930,
+                        capabilities: [
+                            TOUGH, TOUGH, TOUGH,
+                            MOVE, MOVE, MOVE,
+                            HEAL, HEAL, HEAL
+                        ]
+                    },
+                    {
+                        cost: 620,
+                        capabilities: [
+                            TOUGH, TOUGH,
+                            MOVE, MOVE,
+                            HEAL, HEAL
+                        ]
+                    },
+                    {
+                        cost: 310,
+                        capabilities: [
+                            TOUGH,
+                            MOVE,
+                            HEAL
+                        ]
+                    }
+                ]
             }
         ];
 

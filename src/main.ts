@@ -1,4 +1,4 @@
-import { Harvester, Upgrader, Builder, Archer, Serf, Distributor } from './roles/index';
+import { Harvester, Upgrader, Builder, Archer, Serf, Distributor, Healer } from './roles/index';
 import { Spawner } from './spawner';
 
 module.exports.loop = () => {
@@ -46,6 +46,9 @@ module.exports.loop = () => {
                 break;
             case 'archer':
                 Archer.run(creep);
+                break;
+            case 'healer':
+                Healer.run(creep);
                 break;
             default:
                 console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);

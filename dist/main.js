@@ -46,7 +46,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	const index_1 = __webpack_require__(1);
-	const spawner_1 = __webpack_require__(13);
+	const spawner_1 = __webpack_require__(14);
 	module.exports.loop = () => {
 	    spawner_1.Spawner.cleanup();
 	    let tower = Game.getObjectById('5819fe430de1de3555de348d');
@@ -91,6 +91,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            case 'archer':
 	                index_1.Archer.run(creep);
 	                break;
+	            case 'healer':
+	                index_1.Healer.run(creep);
+	                break;
 	            default:
 	                console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);
 	        }
@@ -117,6 +120,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	exports.Distributor = distributor_1.Distributor;
 	var serf_1 = __webpack_require__(12);
 	exports.Serf = serf_1.Serf;
+	var healer_1 = __webpack_require__(13);
+	exports.Healer = healer_1.Healer;
 
 
 /***/ },
@@ -539,6 +544,43 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	"use strict";
+	class Healer {
+	    static run(creep) {
+	        if (!creep.memory.target) {
+	            let damagedCreeps = creep.room.find(FIND_MY_CREEPS, {
+	                filter: (c) => c.hits < c.hitsMax
+	            });
+	            let damagedArchers = _.filter(damagedCreeps, (c) => {
+	                return c.memory.role === 'archer';
+	            });
+	            if (damagedArchers.length > 0) {
+	                let closest = creep.pos.findClosestByRange(damagedArchers);
+	                creep.memory.target = closest.id;
+	            }
+	            else {
+	                let closest = creep.pos.findClosestByRange(damagedCreeps);
+	                creep.memory.target = closest.id;
+	            }
+	        }
+	        if (creep.memory.target) {
+	            let target = Game.getObjectById(creep.memory.target);
+	            if (creep.heal(target) === ERR_NOT_IN_RANGE) {
+	                creep.moveTo(target);
+	            }
+	            else if (target.hits < target.hitsMax) {
+	                delete creep.memory.target;
+	            }
+	        }
+	    }
+	}
+	exports.Healer = Healer;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	"use strict";
 	class Spawner {
 	    static cleanup() {
 	        for (let name in Memory.creeps) {
@@ -676,6 +718,44 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                        capabilities: [
 	                            MOVE,
 	                            RANGED_ATTACK, RANGED_ATTACK
+	                        ]
+	                    }
+	                ]
+	            }, {
+	                name: 'healer',
+	                min: 0,
+	                max: 2,
+	                tiers: [
+	                    {
+	                        cost: 1120,
+	                        capabilities: [
+	                            TOUGH, TOUGH,
+	                            MOVE, MOVE,
+	                            HEAL, HEAL, HEAL, HEAL
+	                        ]
+	                    },
+	                    {
+	                        cost: 930,
+	                        capabilities: [
+	                            TOUGH, TOUGH, TOUGH,
+	                            MOVE, MOVE, MOVE,
+	                            HEAL, HEAL, HEAL
+	                        ]
+	                    },
+	                    {
+	                        cost: 620,
+	                        capabilities: [
+	                            TOUGH, TOUGH,
+	                            MOVE, MOVE,
+	                            HEAL, HEAL
+	                        ]
+	                    },
+	                    {
+	                        cost: 310,
+	                        capabilities: [
+	                            TOUGH,
+	                            MOVE,
+	                            HEAL
 	                        ]
 	                    }
 	                ]

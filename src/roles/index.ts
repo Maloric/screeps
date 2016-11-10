@@ -4,3 +4,4 @@ export { Harvester } from './harvester';
 export { Upgrader } from './upgrader';
 export { Distributor } from './distributor';
 export { Serf } from './serf';
+export { Healer } from './healer';
