@@ -26,8 +26,20 @@ export class Spawner {
                 max: 2,
                 tiers: [
                     {
+                        cost: 700,
+                        capabilities: [
+                            WORK, WORK, WORK, WORK, WORK,
+                            CARRY,
+                            MOVE, MOVE, MOVE
+                        ]
+                    },
+                    {
                         cost: 600,
-                        capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
+                        capabilities: [
+                            WORK, WORK, WORK, WORK, WORK,
+                            CARRY,
+                            MOVE
+                        ]
                     }
                 ],
                 memory: {
@@ -40,11 +52,17 @@ export class Spawner {
                 tiers: [
                     {
                         cost: 300,
-                        capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
+                        capabilities: [
+                            CARRY, CARRY, CARRY, CARRY,
+                            MOVE, MOVE
+                        ]
                     },
                     {
                         cost: 150,
-                        capabilities: [CARRY, CARRY, MOVE],
+                        capabilities: [
+                            CARRY, CARRY,
+                            MOVE
+                        ]
                     }
                 ]
             }, {
@@ -54,11 +72,19 @@ export class Spawner {
                 tiers: [
                     {
                         cost: 400,
-                        capabilities: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+                        capabilities: [
+                            WORK, WORK,
+                            CARRY, CARRY,
+                            MOVE, MOVE
+                        ]
                     },
                     {
                         cost: 200,
-                        capabilities: [WORK, CARRY, MOVE],
+                        capabilities: [
+                            WORK,
+                            CARRY,
+                            MOVE
+                        ]
                     }
                 ]
             }, {
@@ -67,22 +93,49 @@ export class Spawner {
                 max: 6,
                 tiers: [
                     {
+                        cost: 650,
+                        capabilities: [
+                            WORK, WORK, WORK, WORK,
+                            CARRY, CARRY,
+                            MOVE, MOVE, MOVE
+                        ]
+                    },
+                    {
                         cost: 400,
-                        capabilities: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+                        capabilities: [
+                            WORK, WORK,
+                            CARRY, CARRY,
+                            MOVE, MOVE
+                        ]
                     },
                     {
                         cost: 200,
-                        capabilities: [WORK, CARRY, MOVE],
+                        capabilities: [
+                            WORK,
+                            CARRY,
+                            MOVE
+                        ]
                     }
                 ]
             }, {
                 name: 'archer',
                 min: 0,
-                max: 2,
+                max: 4,
                 tiers: [
                     {
+                        cost: 720,
+                        capabilities: [
+                            TOUGH, TOUGH,
+                            MOVE, MOVE,
+                            RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK
+                        ]
+                    },
+                    {
                         cost: 350,
-                        capabilities: [RANGED_ATTACK, RANGED_ATTACK, MOVE],
+                        capabilities: [
+                            MOVE,
+                            RANGED_ATTACK, RANGED_ATTACK
+                        ]
                     }
                 ]
             }
@@ -101,7 +154,7 @@ export class Spawner {
                     tiers: [
                         {
                             cost: 200,
-                            capabilities: [WORK, CARRY, MOVE],
+                            capabilities: [WORK, CARRY, MOVE]
                         }
                     ]
                 }

@@ -567,8 +567,20 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                max: 2,
 	                tiers: [
 	                    {
+	                        cost: 700,
+	                        capabilities: [
+	                            WORK, WORK, WORK, WORK, WORK,
+	                            CARRY,
+	                            MOVE, MOVE, MOVE
+	                        ]
+	                    },
+	                    {
 	                        cost: 600,
-	                        capabilities: [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
+	                        capabilities: [
+	                            WORK, WORK, WORK, WORK, WORK,
+	                            CARRY,
+	                            MOVE
+	                        ]
 	                    }
 	                ],
 	                memory: {
@@ -581,11 +593,17 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                tiers: [
 	                    {
 	                        cost: 300,
-	                        capabilities: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
+	                        capabilities: [
+	                            CARRY, CARRY, CARRY, CARRY,
+	                            MOVE, MOVE
+	                        ]
 	                    },
 	                    {
 	                        cost: 150,
-	                        capabilities: [CARRY, CARRY, MOVE],
+	                        capabilities: [
+	                            CARRY, CARRY,
+	                            MOVE
+	                        ]
 	                    }
 	                ]
 	            }, {
@@ -595,11 +613,19 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                tiers: [
 	                    {
 	                        cost: 400,
-	                        capabilities: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+	                        capabilities: [
+	                            WORK, WORK,
+	                            CARRY, CARRY,
+	                            MOVE, MOVE
+	                        ]
 	                    },
 	                    {
 	                        cost: 200,
-	                        capabilities: [WORK, CARRY, MOVE],
+	                        capabilities: [
+	                            WORK,
+	                            CARRY,
+	                            MOVE
+	                        ]
 	                    }
 	                ]
 	            }, {
@@ -608,22 +634,49 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                max: 6,
 	                tiers: [
 	                    {
+	                        cost: 650,
+	                        capabilities: [
+	                            WORK, WORK, WORK, WORK,
+	                            CARRY, CARRY,
+	                            MOVE, MOVE, MOVE
+	                        ]
+	                    },
+	                    {
 	                        cost: 400,
-	                        capabilities: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+	                        capabilities: [
+	                            WORK, WORK,
+	                            CARRY, CARRY,
+	                            MOVE, MOVE
+	                        ]
 	                    },
 	                    {
 	                        cost: 200,
-	                        capabilities: [WORK, CARRY, MOVE],
+	                        capabilities: [
+	                            WORK,
+	                            CARRY,
+	                            MOVE
+	                        ]
 	                    }
 	                ]
 	            }, {
 	                name: 'archer',
 	                min: 0,
-	                max: 2,
+	                max: 4,
 	                tiers: [
 	                    {
+	                        cost: 720,
+	                        capabilities: [
+	                            TOUGH, TOUGH,
+	                            MOVE, MOVE,
+	                            RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK
+	                        ]
+	                    },
+	                    {
 	                        cost: 350,
-	                        capabilities: [RANGED_ATTACK, RANGED_ATTACK, MOVE],
+	                        capabilities: [
+	                            MOVE,
+	                            RANGED_ATTACK, RANGED_ATTACK
+	                        ]
 	                    }
 	                ]
 	            }
@@ -639,7 +692,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    tiers: [
 	                        {
 	                            cost: 200,
-	                            capabilities: [WORK, CARRY, MOVE],
+	                            capabilities: [WORK, CARRY, MOVE]
 	                        }
 	                    ]
 	                }
