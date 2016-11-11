@@ -48,8 +48,15 @@ export class Spawner {
             }, {
                 name: 'distributor',
                 min: 1,
-                max: 4,
+                max: 6,
                 tiers: [
+                    {
+                        cost: 450,
+                        capabilities: [
+                            CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                            MOVE, MOVE, MOVE
+                        ]
+                    },
                     {
                         cost: 300,
                         capabilities: [
