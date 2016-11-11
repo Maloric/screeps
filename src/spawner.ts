@@ -188,7 +188,7 @@ export class Spawner {
 
         if ((!Memory['roster']['harvester']
             || Memory['roster']['harvester'].length === 0)
-            && !Game.spawns['Spawn1'].canCreateCreep(blueprints[0].tiers[0].capabilities)
+            && Game.spawns['Spawn1'].canCreateCreep(blueprints[0].tiers[0].capabilities) !== OK
         ) {
             // Spawn up to three serfs if there are no harvesters and not enough to create one
             blueprints = [
