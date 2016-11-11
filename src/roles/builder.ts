@@ -12,7 +12,7 @@ export class Builder {
         if (creep.memory.building && !creep.memory.target) {
             let buildTargets = <ConstructionSite[]>creep.room.find(FIND_CONSTRUCTION_SITES);
             if (buildTargets.length > 0) {
-                creep.memory.target = buildTargets[0].id;
+                creep.memory.target = creep.pos.findClosestByPath(buildTargets).id;
             } else {
                 // console.log(`${creep.name} is repairing`);
                 let repairTargets = <Structure[]>creep.room.find(FIND_STRUCTURES, {
@@ -20,8 +20,8 @@ export class Builder {
                 });
 
                 if (repairTargets.length > 0) {
-                    repairTargets.sort((a: any, b: any) => a.hits - b.hits);
-                    creep.memory.target = repairTargets[0].id;
+                    // repairTargets.sort((a: any, b: any) => a.hits - b.hits);
+                    creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;
                 } else {
                     console.log('No repair targets');
                 }

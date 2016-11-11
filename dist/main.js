@@ -394,15 +394,14 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        if (creep.memory.building && !creep.memory.target) {
 	            let buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
 	            if (buildTargets.length > 0) {
-	                creep.memory.target = buildTargets[0].id;
+	                creep.memory.target = creep.pos.findClosestByPath(buildTargets).id;
 	            }
 	            else {
 	                let repairTargets = creep.room.find(FIND_STRUCTURES, {
 	                    filter: (object) => object.hits < object.hitsMax
 	                });
 	                if (repairTargets.length > 0) {
-	                    repairTargets.sort((a, b) => a.hits - b.hits);
-	                    creep.memory.target = repairTargets[0].id;
+	                    creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;
 	                }
 	                else {
 	                    console.log('No repair targets');
