@@ -46,7 +46,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	const index_1 = __webpack_require__(1);
-	const spawner_1 = __webpack_require__(14);
+	const spawner_1 = __webpack_require__(15);
 	module.exports.loop = () => {
 	    spawner_1.Spawner.cleanup();
 	    let tower = Game.getObjectById('5819fe430de1de3555de348d');
@@ -110,25 +110,26 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	var archer_1 = __webpack_require__(2);
 	exports.Archer = archer_1.Archer;
-	var builder_1 = __webpack_require__(3);
+	var builder_1 = __webpack_require__(9);
 	exports.Builder = builder_1.Builder;
-	var harvester_1 = __webpack_require__(9);
+	var harvester_1 = __webpack_require__(10);
 	exports.Harvester = harvester_1.Harvester;
-	var upgrader_1 = __webpack_require__(10);
+	var upgrader_1 = __webpack_require__(11);
 	exports.Upgrader = upgrader_1.Upgrader;
-	var distributor_1 = __webpack_require__(11);
+	var distributor_1 = __webpack_require__(12);
 	exports.Distributor = distributor_1.Distributor;
-	var serf_1 = __webpack_require__(12);
+	var serf_1 = __webpack_require__(13);
 	exports.Serf = serf_1.Serf;
-	var healer_1 = __webpack_require__(13);
+	var healer_1 = __webpack_require__(14);
 	exports.Healer = healer_1.Healer;
 
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const behaviours_1 = __webpack_require__(3);
 	class Archer {
 	    static run(creep) {
 	        if (!creep.memory.target) {
@@ -141,7 +142,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            Archer.attack(creep);
 	        }
 	        else {
-	            Archer.idle(creep);
+	            behaviours_1.Idle(creep);
 	        }
 	    }
 	    static attack(creep) {
@@ -161,9 +162,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }
-	    static idle(creep) {
-	        creep.moveTo(Game.flags['camp']);
-	    }
 	}
 	exports.Archer = Archer;
 
@@ -173,7 +171,216 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(4);
+	var harvest_1 = __webpack_require__(4);
+	exports.Harvest = harvest_1.Harvest;
+	var recover_1 = __webpack_require__(5);
+	exports.Recover = recover_1.Recover;
+	var distribute_1 = __webpack_require__(6);
+	exports.Distribute = distribute_1.Distribute;
+	var checkoutEnergy_1 = __webpack_require__(7);
+	exports.CheckoutEnergy = checkoutEnergy_1.CheckoutEnergy;
+	var idle_1 = __webpack_require__(8);
+	exports.Idle = idle_1.Idle;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function Harvest(creep) {
+	    let target = creep.pos.findClosestByPath(FIND_SOURCES);
+	    if (creep.harvest(target) === ERR_NOT_IN_RANGE) {
+	        creep.moveTo(target);
+	    }
+	    return target;
+	}
+	exports.Harvest = Harvest;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function Recover(creep) {
+	    let harvesters = Memory['roster']['harvester'];
+	    let needyHarvesters = _.filter(harvesters, (h) => Game.creeps[h].memory['distributors'].length === 0);
+	    let greedyHarvesters = _.filter(harvesters, (h) => Game.creeps[h].memory['distributors'].length > 1);
+	    if (needyHarvesters.length > 0 && greedyHarvesters.length > 0) {
+	        let surplus = Game.creeps[greedyHarvesters[0]].memory.distributors;
+	        let reassigned = _.takeRight(surplus)[0];
+	        delete Game.creeps[reassigned].memory.harvester;
+	    }
+	    if (creep.memory.harvester && creep.carry.energy < creep.carryCapacity) {
+	        let h = Game.creeps[creep.memory.harvester];
+	        if (!h) {
+	            delete creep.memory.harvester;
+	            console.log('Removed stale harvester from ' + creep.name);
+	            return;
+	        }
+	        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 10);
+	        if (droppedEnergy.length) {
+	            if (creep.pickup(droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
+	                creep.moveTo(droppedEnergy[0]);
+	            }
+	        }
+	        else {
+	            if (creep.pos.getRangeTo(h) > 1) {
+	                creep.moveTo(h);
+	                return;
+	            }
+	        }
+	        h.transfer(creep, RESOURCE_ENERGY);
+	    }
+	    else if (!creep.memory.harvester) {
+	        if (!harvesters || harvesters.length === 0) {
+	            console.log('No harvesters to assign ' + creep.name + ' to.');
+	            return;
+	        }
+	        let sorted = _.sortBy(harvesters, (h) => {
+	            let harvester = Game.creeps[h];
+	            if (!harvester.memory.distributors) {
+	                harvester.memory.distributors = [];
+	            }
+	            return harvester.memory.distributors.length;
+	        });
+	        creep.memory.harvester = sorted[0];
+	        Game.creeps[sorted[0]].memory.distributors.push(creep.name);
+	    }
+	}
+	exports.Recover = Recover;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function Distribute(creep) {
+	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
+	        let targets = creep.room.find(FIND_STRUCTURES, {
+	            filter: (structure) => {
+	                switch (structure.structureType) {
+	                    case STRUCTURE_TOWER:
+	                    case STRUCTURE_EXTENSION:
+	                    case STRUCTURE_SPAWN:
+	                    case STRUCTURE_CONTAINER:
+	                        return structure.energy < structure.energyCapacity;
+	                    case STRUCTURE_STORAGE:
+	                        let s = structure;
+	                        return s.store.energy < s.storeCapacity;
+	                    default:
+	                        return false;
+	                }
+	            }
+	        });
+	        if (targets.length > 0) {
+	            let tower = _.find(targets, (s) => {
+	                return s.structureType === STRUCTURE_TOWER
+	                    && s.energy < s.energyCapacity * 0.85;
+	            });
+	            if (tower) {
+	                creep.memory.target = tower.id;
+	            }
+	            else {
+	                let secondaryTargets = _.filter(targets, (s) => {
+	                    return s.structureType === STRUCTURE_STORAGE
+	                        && s.store.energy < 500;
+	                });
+	                let primaryTargets = _.difference(targets, secondaryTargets);
+	                let closest = creep.pos.findClosestByPath(primaryTargets);
+	                if (!closest) {
+	                    closest = creep.pos.findClosestByPath(secondaryTargets);
+	                }
+	                if (closest) {
+	                    creep.memory.target = closest.id;
+	                }
+	            }
+	        }
+	    }
+	    if (creep.memory.target) {
+	        let t = Game.getObjectById(creep.memory.target);
+	        let res = creep.transfer(t, RESOURCE_ENERGY);
+	        switch (res) {
+	            case OK:
+	                delete creep.memory.target;
+	                break;
+	            case ERR_NOT_IN_RANGE:
+	                creep.moveTo(t);
+	                break;
+	        }
+	    }
+	}
+	exports.Distribute = Distribute;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function CheckoutEnergy(creep) {
+	    let containersWithEnergy = creep.room.find(FIND_STRUCTURES, {
+	        filter: (structure) => {
+	            switch (structure.structureType) {
+	                case STRUCTURE_EXTENSION:
+	                case STRUCTURE_SPAWN:
+	                case STRUCTURE_CONTAINER:
+	                    return structure.energy > 0;
+	                case STRUCTURE_STORAGE:
+	                    return structure.store.energy > 0;
+	                default:
+	                    return false;
+	            }
+	        }
+	    });
+	    if (containersWithEnergy.length > 0) {
+	        if (containersWithEnergy.length > 0) {
+	            let target = creep.pos.findClosestByPath(containersWithEnergy);
+	            if (!target) {
+	                return;
+	            }
+	            let res;
+	            switch (target.structureType) {
+	                case STRUCTURE_SPAWN:
+	                case STRUCTURE_EXTENSION:
+	                    res = target.transferEnergy(creep);
+	                    break;
+	                case STRUCTURE_CONTAINER:
+	                case STRUCTURE_STORAGE:
+	                    res = target.transfer(creep, RESOURCE_ENERGY);
+	                    break;
+	            }
+	            if (res === ERR_NOT_IN_RANGE) {
+	                creep.moveTo(target);
+	            }
+	        }
+	    }
+	}
+	exports.CheckoutEnergy = CheckoutEnergy;
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function Idle(creep) {
+	    if (!creep.pos.inRangeTo(Game.flags['camp'].pos, 5)) {
+	        creep.moveTo(Game.flags['camp']);
+	    }
+	}
+	exports.Idle = Idle;
+	;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	const index_1 = __webpack_require__(3);
 	class Builder {
 	    static run(creep) {
 	        if (creep.carry.energy === 0) {
@@ -243,200 +450,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var harvest_1 = __webpack_require__(5);
-	exports.Harvest = harvest_1.Harvest;
-	var recover_1 = __webpack_require__(6);
-	exports.Recover = recover_1.Recover;
-	var distribute_1 = __webpack_require__(7);
-	exports.Distribute = distribute_1.Distribute;
-	var checkoutEnergy_1 = __webpack_require__(8);
-	exports.CheckoutEnergy = checkoutEnergy_1.CheckoutEnergy;
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	"use strict";
-	function Harvest(creep) {
-	    let target = creep.pos.findClosestByPath(FIND_SOURCES);
-	    if (creep.harvest(target) === ERR_NOT_IN_RANGE) {
-	        creep.moveTo(target);
-	    }
-	    return target;
-	}
-	exports.Harvest = Harvest;
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	"use strict";
-	function Recover(creep) {
-	    let harvesters = Memory['roster']['harvester'];
-	    let needyHarvesters = _.filter(harvesters, (h) => Game.creeps[h].memory['distributors'].length === 0);
-	    let greedyHarvesters = _.filter(harvesters, (h) => Game.creeps[h].memory['distributors'].length > 1);
-	    if (needyHarvesters.length > 0 && greedyHarvesters.length > 0) {
-	        let surplus = Game.creeps[greedyHarvesters[0]].memory.distributors;
-	        let reassigned = _.takeRight(surplus)[0];
-	        delete Game.creeps[reassigned].memory.harvester;
-	    }
-	    if (creep.memory.harvester && creep.carry.energy < creep.carryCapacity) {
-	        let h = Game.creeps[creep.memory.harvester];
-	        if (!h) {
-	            delete creep.memory.harvester;
-	            console.log('Removed stale harvester from ' + creep.name);
-	            return;
-	        }
-	        let droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 10);
-	        if (droppedEnergy.length) {
-	            if (creep.pickup(droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
-	                creep.moveTo(droppedEnergy[0]);
-	            }
-	        }
-	        else {
-	            if (creep.pos.getRangeTo(h) > 1) {
-	                creep.moveTo(h);
-	                return;
-	            }
-	        }
-	        h.transfer(creep, RESOURCE_ENERGY);
-	    }
-	    else if (!creep.memory.harvester) {
-	        if (!harvesters || harvesters.length === 0) {
-	            console.log('No harvesters to assign ' + creep.name + ' to.');
-	            return;
-	        }
-	        let sorted = _.sortBy(harvesters, (h) => {
-	            let harvester = Game.creeps[h];
-	            if (!harvester.memory.distributors) {
-	                harvester.memory.distributors = [];
-	            }
-	            return harvester.memory.distributors.length;
-	        });
-	        creep.memory.harvester = sorted[0];
-	        Game.creeps[sorted[0]].memory.distributors.push(creep.name);
-	    }
-	}
-	exports.Recover = Recover;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	"use strict";
-	function Distribute(creep) {
-	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
-	        let targets = creep.room.find(FIND_STRUCTURES, {
-	            filter: (structure) => {
-	                switch (structure.structureType) {
-	                    case STRUCTURE_TOWER:
-	                    case STRUCTURE_EXTENSION:
-	                    case STRUCTURE_SPAWN:
-	                    case STRUCTURE_CONTAINER:
-	                        return structure.energy < structure.energyCapacity;
-	                    case STRUCTURE_STORAGE:
-	                        let s = structure;
-	                        return s.store.energy < s.storeCapacity;
-	                    default:
-	                        return false;
-	                }
-	            }
-	        });
-	        if (targets.length > 0) {
-	            let tower = _.find(targets, (s) => {
-	                return s.structureType === STRUCTURE_TOWER
-	                    && s.energy < s.energyCapacity * 0.85;
-	            });
-	            if (tower) {
-	                creep.memory.target = tower.id;
-	            }
-	            else {
-	                let secondaryTargets = _.filter(targets, (s) => {
-	                    return s.structureType === STRUCTURE_STORAGE
-	                        && s.store.energy < 500;
-	                });
-	                let primaryTargets = _.difference(targets, secondaryTargets);
-	                let closest = creep.pos.findClosestByPath(primaryTargets);
-	                if (!closest) {
-	                    closest = creep.pos.findClosestByPath(secondaryTargets);
-	                }
-	                if (closest) {
-	                    creep.memory.target = closest.id;
-	                }
-	            }
-	        }
-	    }
-	    if (creep.memory.target) {
-	        let t = Game.getObjectById(creep.memory.target);
-	        let res = creep.transfer(t, RESOURCE_ENERGY);
-	        switch (res) {
-	            case OK:
-	                delete creep.memory.target;
-	                break;
-	            case ERR_NOT_IN_RANGE:
-	                creep.moveTo(t);
-	                break;
-	        }
-	    }
-	}
-	exports.Distribute = Distribute;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	"use strict";
-	function CheckoutEnergy(creep) {
-	    let containersWithEnergy = creep.room.find(FIND_STRUCTURES, {
-	        filter: (structure) => {
-	            switch (structure.structureType) {
-	                case STRUCTURE_EXTENSION:
-	                case STRUCTURE_SPAWN:
-	                case STRUCTURE_CONTAINER:
-	                    return structure.energy > 0;
-	                case STRUCTURE_STORAGE:
-	                    return structure.store.energy > 0;
-	                default:
-	                    return false;
-	            }
-	        }
-	    });
-	    if (containersWithEnergy.length > 0) {
-	        if (containersWithEnergy.length > 0) {
-	            let target = creep.pos.findClosestByPath(containersWithEnergy);
-	            if (!target) {
-	                return;
-	            }
-	            let res;
-	            switch (target.structureType) {
-	                case STRUCTURE_SPAWN:
-	                case STRUCTURE_EXTENSION:
-	                    res = target.transferEnergy(creep);
-	                    break;
-	                case STRUCTURE_CONTAINER:
-	                case STRUCTURE_STORAGE:
-	                    res = target.transfer(creep, RESOURCE_ENERGY);
-	                    break;
-	            }
-	            if (res === ERR_NOT_IN_RANGE) {
-	                creep.moveTo(target);
-	            }
-	        }
-	    }
-	}
-	exports.CheckoutEnergy = CheckoutEnergy;
-
-
-/***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -473,11 +487,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(4);
+	const index_1 = __webpack_require__(3);
 	class Upgrader {
 	    static run(creep) {
 	        if (creep.memory.upgrading && creep.carry.energy === 0) {
@@ -502,11 +516,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(4);
+	const index_1 = __webpack_require__(3);
 	class Distributor {
 	    static run(creep) {
 	        if (creep.carry.energy < creep.carryCapacity) {
@@ -521,11 +535,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(4);
+	const index_1 = __webpack_require__(3);
 	class Serf {
 	    static run(creep) {
 	        if (creep.carry.energy < creep.carryCapacity) {
@@ -540,10 +554,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
-/***/ function(module, exports) {
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const behaviours_1 = __webpack_require__(3);
 	class Healer {
 	    static run(creep) {
 	        if (!creep.memory.target) {
@@ -571,13 +586,16 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                delete creep.memory.target;
 	            }
 	        }
+	        else {
+	            behaviours_1.Idle(creep);
+	        }
 	    }
 	}
 	exports.Healer = Healer;
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	"use strict";

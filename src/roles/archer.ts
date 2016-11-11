@@ -1,3 +1,5 @@
+import { Idle } from '../behaviours';
+
 export class Archer {
     static run(creep: Creep) {
         if (!creep.memory.target) {
@@ -10,7 +12,7 @@ export class Archer {
         if (creep.memory.target) {
             Archer.attack(creep);
         } else {
-            Archer.idle(creep);
+            Idle(creep);
         }
     }
 
@@ -30,9 +32,5 @@ export class Archer {
                     break;
             }
         }
-    }
-
-    static idle(creep: Creep) {
-        creep.moveTo(Game.flags['camp']);
     }
 }

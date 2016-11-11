@@ -1,3 +1,5 @@
+import { Idle } from '../behaviours';
+
 export class Healer {
     static run(creep: Creep) {
         if (!creep.memory.target) {
@@ -25,6 +27,8 @@ export class Healer {
             } else if (target.hits < target.hitsMax) {
                 delete creep.memory.target;
             }
+        } else {
+            Idle(creep);
         }
     }
 }
