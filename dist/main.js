@@ -189,11 +189,31 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	function Harvest(creep) {
-	    let target = creep.pos.findClosestByPath(FIND_SOURCES);
-	    if (creep.harvest(target) === ERR_NOT_IN_RANGE) {
-	        creep.moveTo(target);
+	    if (!creep.memory.target) {
+	        let sourceIds = _.map(creep.room.find(FIND_SOURCES), (s) => s.id);
+	        let harvestersWithTargets = _.filter(_.values(Game.creeps), (c) => {
+	            return c.memory
+	                && c.memory.role === 'harvester'
+	                && c.memory.target;
+	        });
+	        let targets = _.map(harvestersWithTargets, (c) => c.memory.target);
+	        let freeTargets = _.difference(sourceIds, targets);
+	        if (freeTargets && freeTargets.length > 0) {
+	            creep.memory.target = freeTargets[0];
+	        }
 	    }
-	    return target;
+	    if (creep.memory.target) {
+	        let target = Game.getObjectById(creep.memory.target);
+	        let res = creep.harvest(target);
+	        switch (res) {
+	            case ERR_NOT_IN_RANGE:
+	                creep.moveTo(target);
+	                break;
+	            case ERR_INVALID_TARGET:
+	                delete creep.memory.target;
+	                break;
+	        }
+	    }
 	}
 	exports.Harvest = Harvest;
 
@@ -450,36 +470,13 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 10 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const behaviours_1 = __webpack_require__(3);
 	class Harvester {
 	    static run(creep) {
-	        if (!creep.memory.target) {
-	            let sourceIds = _.map(creep.room.find(FIND_SOURCES), (s) => s.id);
-	            let harvestersWithTargets = _.filter(_.values(Game.creeps), (c) => {
-	                return c.memory
-	                    && c.memory.role === 'harvester'
-	                    && c.memory.target;
-	            });
-	            let targets = _.map(harvestersWithTargets, (c) => c.memory.target);
-	            let freeTargets = _.difference(sourceIds, targets);
-	            if (freeTargets && freeTargets.length > 0) {
-	                creep.memory.target = freeTargets[0];
-	            }
-	        }
-	        if (creep.memory.target) {
-	            let target = Game.getObjectById(creep.memory.target);
-	            let res = creep.harvest(target);
-	            switch (res) {
-	                case ERR_NOT_IN_RANGE:
-	                    creep.moveTo(target);
-	                    break;
-	                case ERR_INVALID_TARGET:
-	                    delete creep.memory.target;
-	                    break;
-	            }
-	        }
+	        behaviours_1.Harvest(creep);
 	    }
 	}
 	exports.Harvester = Harvester;
