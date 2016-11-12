@@ -2,6 +2,7 @@ import { Harvester, Upgrader, Builder, Archer, Serf, Distributor, Healer } from 
 import { Spawner } from './spawner';
 
 module.exports.loop = () => {
+    Memory['enoughEnergyInReserve'] = Spawner.isEnoughEnergyInReserve();
     Spawner.cleanup();
     let tower = <StructureTower>Game.getObjectById('5819fe430de1de3555de348d');
     if (tower) {

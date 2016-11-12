@@ -1,4 +1,9 @@
 export function CheckoutEnergy(creep: Creep): void {
+    if (!Memory['enoughEnergyInReserve']) {
+        creep.say('Energy Freeze');
+        return;
+    }
+
     let containersWithEnergy: any[] = creep.room.find(FIND_STRUCTURES, {
         filter: (structure: any) => {
             switch (structure.structureType) {

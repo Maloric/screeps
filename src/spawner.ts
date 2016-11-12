@@ -1,4 +1,171 @@
 export class Spawner {
+    static blueprints = [
+        {
+            name: 'harvester',
+            min: 1,
+            max: 2,
+            tiers: [
+                {
+                    cost: 700,
+                    capabilities: [
+                        WORK, WORK, WORK, WORK, WORK,
+                        CARRY,
+                        MOVE, MOVE, MOVE
+                    ]
+                },
+                {
+                    cost: 600,
+                    capabilities: [
+                        WORK, WORK, WORK, WORK, WORK,
+                        CARRY,
+                        MOVE
+                    ]
+                }
+            ],
+            memory: {
+                distributors: []
+            }
+        }, {
+            name: 'distributor',
+            min: 1,
+            max: 6,
+            tiers: [
+                {
+                    cost: 450,
+                    capabilities: [
+                        CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                        MOVE, MOVE, MOVE
+                    ]
+                },
+                {
+                    cost: 300,
+                    capabilities: [
+                        CARRY, CARRY, CARRY, CARRY,
+                        MOVE, MOVE
+                    ]
+                },
+                {
+                    cost: 150,
+                    capabilities: [
+                        CARRY, CARRY,
+                        MOVE
+                    ]
+                }
+            ]
+        }, {
+            name: 'builder',
+            min: 0,
+            max: 4,
+            tiers: [
+                {
+                    cost: 400,
+                    capabilities: [
+                        WORK, WORK,
+                        CARRY, CARRY,
+                        MOVE, MOVE
+                    ]
+                },
+                {
+                    cost: 200,
+                    capabilities: [
+                        WORK,
+                        CARRY,
+                        MOVE
+                    ]
+                }
+            ]
+        }, {
+            name: 'upgrader',
+            min: 1,
+            max: 6,
+            tiers: [
+                {
+                    cost: 650,
+                    capabilities: [
+                        WORK, WORK, WORK, WORK,
+                        CARRY, CARRY,
+                        MOVE, MOVE, MOVE
+                    ]
+                },
+                {
+                    cost: 400,
+                    capabilities: [
+                        WORK, WORK,
+                        CARRY, CARRY,
+                        MOVE, MOVE
+                    ]
+                },
+                {
+                    cost: 200,
+                    capabilities: [
+                        WORK,
+                        CARRY,
+                        MOVE
+                    ]
+                }
+            ]
+        }, {
+            name: 'archer',
+            min: 0,
+            max: 4,
+            tiers: [
+                {
+                    cost: 720,
+                    capabilities: [
+                        TOUGH, TOUGH,
+                        MOVE, MOVE,
+                        RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK
+                    ]
+                },
+                {
+                    cost: 350,
+                    capabilities: [
+                        MOVE,
+                        RANGED_ATTACK, RANGED_ATTACK
+                    ]
+                }
+            ]
+        }, {
+            name: 'healer',
+            min: 0,
+            max: 2,
+            tiers: [
+                {
+                    cost: 1120,
+                    capabilities: [
+                        TOUGH, TOUGH,
+                        MOVE, MOVE,
+                        HEAL, HEAL, HEAL, HEAL
+                    ]
+                },
+                {
+                    cost: 930,
+                    capabilities: [
+                        TOUGH, TOUGH, TOUGH,
+                        MOVE, MOVE, MOVE,
+                        HEAL, HEAL, HEAL
+                    ]
+                },
+                {
+                    cost: 620,
+                    capabilities: [
+                        TOUGH, TOUGH,
+                        MOVE, MOVE,
+                        HEAL, HEAL
+                    ]
+                },
+                {
+                    cost: 310,
+                    capabilities: [
+                        TOUGH,
+                        MOVE,
+                        HEAL
+                    ]
+                }
+            ]
+        }
+    ];
+
     static cleanup(): void {
         for (let name in Memory.creeps) {
             if (!Game.creeps[name]) {
@@ -19,172 +186,7 @@ export class Spawner {
     }
 
     static autoSpawn(): void {
-        let blueprints = [
-            {
-                name: 'harvester',
-                min: 1,
-                max: 2,
-                tiers: [
-                    {
-                        cost: 700,
-                        capabilities: [
-                            WORK, WORK, WORK, WORK, WORK,
-                            CARRY,
-                            MOVE, MOVE, MOVE
-                        ]
-                    },
-                    {
-                        cost: 600,
-                        capabilities: [
-                            WORK, WORK, WORK, WORK, WORK,
-                            CARRY,
-                            MOVE
-                        ]
-                    }
-                ],
-                memory: {
-                    distributors: []
-                }
-            }, {
-                name: 'distributor',
-                min: 1,
-                max: 6,
-                tiers: [
-                    {
-                        cost: 450,
-                        capabilities: [
-                            CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
-                            MOVE, MOVE, MOVE
-                        ]
-                    },
-                    {
-                        cost: 300,
-                        capabilities: [
-                            CARRY, CARRY, CARRY, CARRY,
-                            MOVE, MOVE
-                        ]
-                    },
-                    {
-                        cost: 150,
-                        capabilities: [
-                            CARRY, CARRY,
-                            MOVE
-                        ]
-                    }
-                ]
-            }, {
-                name: 'builder',
-                min: 0,
-                max: 4,
-                tiers: [
-                    {
-                        cost: 400,
-                        capabilities: [
-                            WORK, WORK,
-                            CARRY, CARRY,
-                            MOVE, MOVE
-                        ]
-                    },
-                    {
-                        cost: 200,
-                        capabilities: [
-                            WORK,
-                            CARRY,
-                            MOVE
-                        ]
-                    }
-                ]
-            }, {
-                name: 'upgrader',
-                min: 1,
-                max: 6,
-                tiers: [
-                    {
-                        cost: 650,
-                        capabilities: [
-                            WORK, WORK, WORK, WORK,
-                            CARRY, CARRY,
-                            MOVE, MOVE, MOVE
-                        ]
-                    },
-                    {
-                        cost: 400,
-                        capabilities: [
-                            WORK, WORK,
-                            CARRY, CARRY,
-                            MOVE, MOVE
-                        ]
-                    },
-                    {
-                        cost: 200,
-                        capabilities: [
-                            WORK,
-                            CARRY,
-                            MOVE
-                        ]
-                    }
-                ]
-            }, {
-                name: 'archer',
-                min: 0,
-                max: 4,
-                tiers: [
-                    {
-                        cost: 720,
-                        capabilities: [
-                            TOUGH, TOUGH,
-                            MOVE, MOVE,
-                            RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK
-                        ]
-                    },
-                    {
-                        cost: 350,
-                        capabilities: [
-                            MOVE,
-                            RANGED_ATTACK, RANGED_ATTACK
-                        ]
-                    }
-                ]
-            }, {
-                name: 'healer',
-                min: 0,
-                max: 2,
-                tiers: [
-                    {
-                        cost: 1120,
-                        capabilities: [
-                            TOUGH, TOUGH,
-                            MOVE, MOVE,
-                            HEAL, HEAL, HEAL, HEAL
-                        ]
-                    },
-                    {
-                        cost: 930,
-                        capabilities: [
-                            TOUGH, TOUGH, TOUGH,
-                            MOVE, MOVE, MOVE,
-                            HEAL, HEAL, HEAL
-                        ]
-                    },
-                    {
-                        cost: 620,
-                        capabilities: [
-                            TOUGH, TOUGH,
-                            MOVE, MOVE,
-                            HEAL, HEAL
-                        ]
-                    },
-                    {
-                        cost: 310,
-                        capabilities: [
-                            TOUGH,
-                            MOVE,
-                            HEAL
-                        ]
-                    }
-                ]
-            }
-        ];
+        let blueprints = this.blueprints;
 
         if ((!Memory['roster']['harvester']
             || Memory['roster']['harvester'].length === 0)
@@ -214,8 +216,8 @@ export class Spawner {
             });
         }
 
-        if (Spawner.fulfillCreepOrders(blueprints, 'min')) {
-            if (Spawner.fulfillCreepOrders(blueprints, 'max')) {
+        if (this.fulfillCreepOrders(blueprints, 'min')) {
+            if (this.fulfillCreepOrders(blueprints, 'max')) {
                 console.log('Maximum creep order fulfilled.');
             }
         };
@@ -230,7 +232,7 @@ export class Spawner {
             if ((!existing && blueprint[type] > 0) || (existing && existing.length < blueprint[type])) {
                 let spawn = Game.spawns['Spawn1'];
                 for (let i = 0; i < blueprint.tiers.length; i++) {
-                    if (Spawner.tryCreateCreep(spawn, blueprint, i)) {
+                    if (this.tryCreateCreep(spawn, blueprint, i)) {
                         break;
                     };
                 }
@@ -241,7 +243,21 @@ export class Spawner {
         return fulfilled;
     }
 
+    static isEnoughEnergyInReserve(): boolean {
+        let harvesterCost = this.blueprints[0].tiers[0].cost;
+        return Game.spawns['Spawn1'].room.energyAvailable < harvesterCost
+            && (!Memory['roster']['harvester']
+                || Memory['roster']['harvester'].length === 0
+            );
+    }
+
     static tryCreateCreep(spawn: StructureSpawn, blueprint: any, tierIndex: number): boolean {
+        if (Memory['enoughEnergyInReserve'] && blueprint.name !== 'harvester') {
+            // Keep enough energy in reserve to spawn a new harvester
+            return false;
+        }
+
+
         let tier = blueprint.tiers[tierIndex];
         if (spawn.canCreateCreep(tier.capabilities) === OK) {
             let newName = spawn.createCreep(tier.capabilities, undefined, _.merge(blueprint.memory || {}, {
