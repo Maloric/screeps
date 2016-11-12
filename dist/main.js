@@ -769,6 +769,14 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        max: 4,
 	        tiers: [
 	            {
+	                cost: 600,
+	                capabilities: [
+	                    WORK, WORK, WORK,
+	                    CARRY, CARRY, CARRY,
+	                    MOVE, MOVE, MOVE
+	                ]
+	            },
+	            {
 	                cost: 400,
 	                capabilities: [
 	                    WORK, WORK,
