@@ -53,6 +53,9 @@ export function Distribute(creep: Creep) {
             case ERR_NOT_IN_RANGE:
                 creep.moveTo(t);
                 break;
+            case ERR_INVALID_TARGET:
+                delete creep.memory.target;
+                break;
         }
     }
 }
