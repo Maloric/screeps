@@ -398,7 +398,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	function Idle(creep) {
-	    if (!creep.pos.inRangeTo(Game.flags['camp'].pos, 5)) {
+	    if (!creep.pos.inRangeTo(Game.flags['camp'].pos, 3)) {
 	        creep.moveTo(Game.flags['camp']);
 	    }
 	}
