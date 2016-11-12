@@ -193,7 +193,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        let sourceIds = _.map(creep.room.find(FIND_SOURCES), (s) => s.id);
 	        let harvestersWithTargets = _.filter(_.values(Game.creeps), (c) => {
 	            return c.memory
-	                && c.memory.role === 'harvester'
+	                && c.memory.role === creep.memory.role
 	                && c.memory.target;
 	        });
 	        let targets = _.map(harvestersWithTargets, (c) => c.memory.target);

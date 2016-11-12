@@ -3,7 +3,7 @@ export function Harvest(creep: Creep): void {
         let sourceIds: string[] = _.map(creep.room.find(FIND_SOURCES), (s: Source) => s.id);
         let harvestersWithTargets = _.filter(_.values(Game.creeps), (c: Creep) => {
             return c.memory
-                && c.memory.role === 'harvester'
+                && c.memory.role === creep.memory.role
                 && c.memory.target;
         });
         let targets: string[] = _.map(harvestersWithTargets, (c: Creep) => <string>c.memory.target);
