@@ -245,7 +245,7 @@ export class Spawner {
 
     static isEnoughEnergyInReserve(): boolean {
         let harvesterCost = this.blueprints[0].tiers[0].cost;
-        return Game.spawns['Spawn1'].room.energyAvailable < harvesterCost;
+        return Game.spawns['Spawn1'].room.energyAvailable >= harvesterCost;
     }
 
     static tryCreateCreep(spawn: StructureSpawn, blueprint: any, tierIndex: number): boolean {

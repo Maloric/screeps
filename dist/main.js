@@ -681,7 +681,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    }
 	    static isEnoughEnergyInReserve() {
 	        let harvesterCost = this.blueprints[0].tiers[0].cost;
-	        return Game.spawns['Spawn1'].room.energyAvailable < harvesterCost;
+	        return Game.spawns['Spawn1'].room.energyAvailable >= harvesterCost;
 	    }
 	    static tryCreateCreep(spawn, blueprint, tierIndex) {
 	        if (Memory['enoughEnergyInReserve']
