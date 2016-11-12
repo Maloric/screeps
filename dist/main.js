@@ -346,8 +346,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	function CheckoutEnergy(creep) {
 	    if (!Memory['enoughEnergyInReserve']) {
-	        creep.say('Energy Freeze');
+	        creep.memory.energyFreeze = true;
 	        return;
+	    }
+	    else {
+	        delete creep.memory.energyFreeze;
 	    }
 	    let containersWithEnergy = creep.room.find(FIND_STRUCTURES, {
 	        filter: (structure) => {

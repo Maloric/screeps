@@ -1,7 +1,9 @@
 export function CheckoutEnergy(creep: Creep): void {
     if (!Memory['enoughEnergyInReserve']) {
-        creep.say('Energy Freeze');
+        creep.memory.energyFreeze = true;
         return;
+    } else {
+        delete creep.memory.energyFreeze;
     }
 
     let containersWithEnergy: any[] = creep.room.find(FIND_STRUCTURES, {
