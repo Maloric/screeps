@@ -1,5 +1,5 @@
 export class Spawner {
-    static blueprints = [
+    static blueprints: any = [
         {
             name: 'harvester',
             min: 1,
@@ -206,6 +206,7 @@ export class Spawner {
                     name: 'serf',
                     min: 1,
                     max: 3,
+                    force: true,
                     tiers: [
                         {
                             cost: 200,
@@ -266,7 +267,7 @@ export class Spawner {
     }
 
     static tryCreateCreep(spawn: StructureSpawn, blueprint: any, tierIndex: number): boolean {
-        if (Memory['enoughEnergyInReserve']
+        if ((Memory['enoughEnergyInReserve'] || blueprint.force)
             && (!Memory['roster']['harvester']
                 || Memory['roster']['harvester'].length === 0
             )

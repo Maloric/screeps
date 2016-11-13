@@ -647,6 +647,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    name: 'serf',
 	                    min: 1,
 	                    max: 3,
+	                    force: true,
 	                    tiers: [
 	                        {
 	                            cost: 200,
@@ -702,7 +703,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        return true;
 	    }
 	    static tryCreateCreep(spawn, blueprint, tierIndex) {
-	        if (Memory['enoughEnergyInReserve']
+	        if ((Memory['enoughEnergyInReserve'] || blueprint.force)
 	            && (!Memory['roster']['harvester']
 	                || Memory['roster']['harvester'].length === 0)
 	            && blueprint.name !== 'harvester') {
