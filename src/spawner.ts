@@ -267,23 +267,21 @@ export class Spawner {
     }
 
     static tryCreateCreep(spawn: StructureSpawn, blueprint: any, tierIndex: number): boolean {
-        if ((Memory['enoughEnergyInReserve'] || blueprint.force)
-            && (!Memory['roster']['harvester']
-                || Memory['roster']['harvester'].length === 0
-            )
-            && blueprint.name !== 'harvester') {
-            // Keep enough energy in reserve to spawn a new harvester
-            return false;
-        }
+        if (blueprint.force
+            || blueprint.name === 'harvester'
+            || Memory['enoughEnergyInReserve']
+            || (Memory['roster']['harvester']
+                && Memory['roster']['harvester'].length > 0
+            )) {
 
-
-        let tier = blueprint.tiers[tierIndex];
-        if (spawn.canCreateCreep(tier.capabilities) === OK) {
-            let newName = spawn.createCreep(tier.capabilities, undefined, _.merge(blueprint.memory || {}, {
-                role: blueprint.name
-            }));
-            console.log(`Spawning ${newName}`);
-            return true;
+            let tier = blueprint.tiers[tierIndex];
+            if (spawn.canCreateCreep(tier.capabilities) === OK) {
+                let newName = spawn.createCreep(tier.capabilities, undefined, _.merge(blueprint.memory || {}, {
+                    role: blueprint.name
+                }));
+                console.log(`Spawning ${newName}`);
+                return true;
+            }
         }
         return false;
     }
