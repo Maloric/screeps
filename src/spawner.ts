@@ -252,8 +252,16 @@ export class Spawner {
     }
 
     static isEnoughEnergyInReserve(): boolean {
-        let harvesterCost = this.blueprints[0].tiers[0].cost;
-        return Game.spawns['Spawn1'].room.energyAvailable >= harvesterCost;
+        let harvesterCost = this.blueprints[0].tiers[1].cost;
+
+        if (Game.spawns['Spawn1'].room.energyAvailable < harvesterCost) {
+            let oldHarvesters = _.filter(Memory['roster']['harvester'], (c: string) => {
+                return Game.creeps[c].ticksToLive < 70;
+            });
+
+            return oldHarvesters.length === 0;
+        }
+        return true;
     }
 
     static tryCreateCreep(spawn: StructureSpawn, blueprint: any, tierIndex: number): boolean {
