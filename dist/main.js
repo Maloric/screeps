@@ -694,7 +694,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        let harvesterCost = this.blueprints[0].tiers[1].cost;
 	        if (Game.spawns['Spawn1'].room.energyAvailable < harvesterCost) {
 	            let oldHarvesters = _.filter(Memory['roster']['harvester'], (c) => {
-	                return Game.creeps[c].ticksToLive < 70;
+	                return Game.creeps[c]
+	                    && Game.creeps[c].ticksToLive < 70;
 	            });
 	            return oldHarvesters.length === 0;
 	        }
