@@ -741,6 +741,14 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    CARRY,
 	                    MOVE
 	                ]
+	            },
+	            {
+	                cost: 300,
+	                capabilities: [
+	                    WORK, WORK,
+	                    CARRY,
+	                    MOVE
+	                ]
 	            }
 	        ],
 	        memory: {

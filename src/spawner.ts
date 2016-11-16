@@ -20,6 +20,14 @@ export class Spawner {
                         CARRY,
                         MOVE
                     ]
+                },
+                {
+                    cost: 300,
+                    capabilities: [
+                        WORK, WORK,
+                        CARRY,
+                        MOVE
+                    ]
                 }
             ],
             memory: {
