@@ -206,7 +206,7 @@ export class Spawner {
 
         if ((!Memory['roster']['harvester']
             || Memory['roster']['harvester'].length === 0)
-            && Game.spawns['Spawn1'].canCreateCreep(blueprints[0].tiers[0].capabilities) !== OK
+            && Game.spawns['Spawn1'].canCreateCreep(blueprints[0].tiers[2].capabilities) !== OK
         ) {
             // Spawn up to three serfs if there are no harvesters and not enough to create one
             blueprints = [
@@ -235,7 +235,7 @@ export class Spawner {
 
         if (this.fulfillCreepOrders(blueprints, 'min')) {
             if (this.fulfillCreepOrders(blueprints, 'max')) {
-                console.log('Maximum creep order fulfilled.');
+                // console.log('Maximum creep order fulfilled.');
             }
         };
     }

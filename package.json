@@ -9,7 +9,9 @@
     "postbuild": "prepend dist/main.js \"module.exports = \"",
     "precommit": "npm run build",
     "commit": "git add . && git commit",
-    "postcommit": "git pull -r && git push"
+    "postcommit": "git pull -r && git push",
+    "pretmp": "npm run build && rimraf \"/Users/jamesmorris/Library/Application Support/Screeps/scripts/screeps.com/tutorial-1\"",
+    "tmp": "cp -R ./dist/ \"/Users/jamesmorris/Library/Application Support/Screeps/scripts/screeps.com/tutorial-1\""
   },
   "contributors": [
     "Jamie Morris <jamie@maloric.com>"

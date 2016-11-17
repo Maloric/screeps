@@ -561,7 +561,22 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	class Serf {
 	    static run(creep) {
 	        if (creep.carry.energy < creep.carryCapacity) {
-	            index_1.Harvest(creep);
+	            if (!creep.memory.target) {
+	                let target = creep.pos.findClosestByPath(creep.room.find(FIND_SOURCES));
+	                creep.memory.target = target.id;
+	            }
+	            if (creep.memory.target) {
+	                let target = Game.getObjectById(creep.memory.target);
+	                let res = creep.harvest(target);
+	                switch (res) {
+	                    case ERR_NOT_IN_RANGE:
+	                        creep.moveTo(target);
+	                        break;
+	                    case ERR_INVALID_TARGET:
+	                        delete creep.memory.target;
+	                        break;
+	                }
+	            }
 	        }
 	        else {
 	            index_1.Distribute(creep);
@@ -641,7 +656,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        let blueprints = this.blueprints;
 	        if ((!Memory['roster']['harvester']
 	            || Memory['roster']['harvester'].length === 0)
-	            && Game.spawns['Spawn1'].canCreateCreep(blueprints[0].tiers[0].capabilities) !== OK) {
+	            && Game.spawns['Spawn1'].canCreateCreep(blueprints[0].tiers[2].capabilities) !== OK) {
 	            blueprints = [
 	                {
 	                    name: 'serf',
@@ -667,7 +682,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (this.fulfillCreepOrders(blueprints, 'min')) {
 	            if (this.fulfillCreepOrders(blueprints, 'max')) {
-	                console.log('Maximum creep order fulfilled.');
 	            }
 	        }
 	        ;
