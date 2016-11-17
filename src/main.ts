@@ -1,5 +1,7 @@
 import { Harvester, Upgrader, Builder, Archer, Serf, Distributor, Healer } from './roles/index';
 import { Spawner } from './spawner';
+import { ReportStep } from './behaviours';
+import { Schedule } from './scheduler';
 
 export function loop() {
     Memory['enoughEnergyInReserve'] = Spawner.isEnoughEnergyInReserve();
@@ -54,7 +56,9 @@ export function loop() {
             default:
                 console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);
         }
+        ReportStep(creep);
     }
+    Schedule();
     Memory['roster'] = creepRoster;
     Spawner.autoSpawn();
 };

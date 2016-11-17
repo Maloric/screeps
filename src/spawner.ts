@@ -123,7 +123,7 @@ export class Spawner {
         }, {
             name: 'archer',
             min: 0,
-            max: 4,
+            max: 0,
             tiers: [
                 {
                     cost: 720,
@@ -144,7 +144,7 @@ export class Spawner {
         }, {
             name: 'healer',
             min: 0,
-            max: 2,
+            max: 0,
             tiers: [
                 {
                     cost: 1120,

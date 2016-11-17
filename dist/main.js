@@ -46,7 +46,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	const index_1 = __webpack_require__(1);
-	const spawner_1 = __webpack_require__(15);
+	const spawner_1 = __webpack_require__(16);
+	const behaviours_1 = __webpack_require__(3);
+	const scheduler_1 = __webpack_require__(17);
 	function loop() {
 	    Memory['enoughEnergyInReserve'] = spawner_1.Spawner.isEnoughEnergyInReserve();
 	    spawner_1.Spawner.cleanup();
@@ -98,7 +100,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            default:
 	                console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);
 	        }
+	        behaviours_1.ReportStep(creep);
 	    }
+	    scheduler_1.Schedule();
 	    Memory['roster'] = creepRoster;
 	    spawner_1.Spawner.autoSpawn();
 	}
@@ -113,17 +117,17 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	var archer_1 = __webpack_require__(2);
 	exports.Archer = archer_1.Archer;
-	var builder_1 = __webpack_require__(9);
+	var builder_1 = __webpack_require__(10);
 	exports.Builder = builder_1.Builder;
-	var harvester_1 = __webpack_require__(10);
+	var harvester_1 = __webpack_require__(11);
 	exports.Harvester = harvester_1.Harvester;
-	var upgrader_1 = __webpack_require__(11);
+	var upgrader_1 = __webpack_require__(12);
 	exports.Upgrader = upgrader_1.Upgrader;
-	var distributor_1 = __webpack_require__(12);
+	var distributor_1 = __webpack_require__(13);
 	exports.Distributor = distributor_1.Distributor;
-	var serf_1 = __webpack_require__(13);
+	var serf_1 = __webpack_require__(14);
 	exports.Serf = serf_1.Serf;
-	var healer_1 = __webpack_require__(14);
+	var healer_1 = __webpack_require__(15);
 	exports.Healer = healer_1.Healer;
 
 
@@ -184,6 +188,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	exports.CheckoutEnergy = checkoutEnergy_1.CheckoutEnergy;
 	var idle_1 = __webpack_require__(8);
 	exports.Idle = idle_1.Idle;
+	var reportStep_1 = __webpack_require__(9);
+	exports.ReportStep = reportStep_1.ReportStep;
 
 
 /***/ },
@@ -419,6 +425,35 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function ReportStep(creep) {
+	    let posKey = `${creep.pos.roomName}_${creep.pos.x}_${creep.pos.y}`;
+	    if (creep.memory.lastPos === posKey) {
+	        return;
+	    }
+	    creep.memory.lastPos = posKey;
+	    if (!Memory['paths']) {
+	        Memory['paths'] = {};
+	    }
+	    if (!Memory['paths'][posKey]) {
+	        Memory['paths'][posKey] = {
+	            room: creep.pos.roomName,
+	            x: creep.pos.x,
+	            y: creep.pos.y,
+	            count: 1
+	        };
+	    }
+	    else if (Memory['paths'][posKey]['count'] >= 0) {
+	        Memory['paths'][posKey]['count']++;
+	    }
+	}
+	exports.ReportStep = ReportStep;
+
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -491,7 +526,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -505,7 +540,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -534,7 +569,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -553,7 +588,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -587,7 +622,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -628,7 +663,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -850,7 +885,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        name: 'archer',
 	        min: 0,
-	        max: 4,
+	        max: 0,
 	        tiers: [
 	            {
 	                cost: 720,
@@ -871,7 +906,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        name: 'healer',
 	        min: 0,
-	        max: 2,
+	        max: 0,
 	        tiers: [
 	            {
 	                cost: 1120,
@@ -909,6 +944,40 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    }
 	];
 	exports.Spawner = Spawner;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function Schedule() {
+	    if (Game.time % 20 === 0) {
+	        let highPriorityPaths = _.filter(Memory['paths'], (path) => {
+	            return path.count > 10;
+	        });
+	        let sorted = _.sortBy(highPriorityPaths, (path) => {
+	            return 0 - path.count;
+	        });
+	        let top3 = _.take(sorted, 3);
+	        _.each(top3, (path) => {
+	            console.log(path.x, path.y, path.room);
+	            let pos = new RoomPosition(path.x, path.y, path.room);
+	            let res = pos.createConstructionSite(STRUCTURE_ROAD);
+	            let posKey = `${path.room}_${path.x}_${path.y}`;
+	            if (res === OK) {
+	                console.log(`Building road at ${posKey}`);
+	            }
+	            else {
+	                console.log(`Cannot build road at ${posKey}: ${res}`);
+	            }
+	            console.log(posKey);
+	            Memory['paths'][posKey].count = -1;
+	        });
+	    }
+	}
+	exports.Schedule = Schedule;
+	;
 
 
 /***/ }
