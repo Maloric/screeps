@@ -1,28 +1,36 @@
-export function Schedule() {
-    if (Game.time % 20 === 0) {
-        let highPriorityPaths = _.filter(Memory['paths'], (path: any) => {
-            return path.count > 10;
-        });
+export class Scheduler {
 
-        let sorted = _.sortBy(highPriorityPaths, (path: any) => {
-            return 0 - path.count;
-        });
+    taskArray: any = {};
 
-        let top3 = _.take(sorted, 3);
+    constructor() {
+        console.log("running constructor");
+        if(!Memory['scheduledTasks']){
+            Memory['scheduledTasks'] = {};
+        }
+    }
 
-        _.each(top3, (path) => {
-            console.log(path.x, path.y, path.room);
-            let pos = new RoomPosition(path.x, path.y, path.room);
-            let res = pos.createConstructionSite(STRUCTURE_ROAD);
-
-            let posKey = `${path.room}_${path.x}_${path.y}`;
-            if (res === OK) {
-                console.log(`Building road at ${posKey}`);
-            } else {
-                console.log(`Cannot build road at ${posKey}: ${res}`);
+    tick(): void {
+        let currentTick = Game.time;
+        let self = this;
+        _.forEach(Memory['scheduledTasks'], function(task: any){
+            if (currentTick % task.interval === 0) {
+                console.log(`Running: ${task.name}`);
+                self.taskArray[task.name].run();
             }
-            console.log(posKey);
-            Memory['paths'][posKey].count = -1;
         });
     }
+
+    schedule(task: Task): void {
+        console.log(`scheduling ${task.name} every ${task.interval} ticks`);
+        Memory['scheduledTasks'][task.name] = {
+            name: task.name,
+            interval: task.interval
+        }
+        this.taskArray[task.name] = task;
+    }
+
+    unschedule(key: string): void {
+        delete Memory['scheduledTasks'][key]
+    }
+
 };

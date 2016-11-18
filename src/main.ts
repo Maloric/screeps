@@ -1,7 +1,12 @@
 import { Harvester, Upgrader, Builder, Archer, Serf, Distributor, Healer } from './roles/index';
 import { Spawner } from './spawner';
 import { ReportStep } from './behaviours';
-import { Schedule } from './scheduler';
+import { Scheduler } from './scheduler';
+import { RoadBuilder } from './tasks/roadBuilder';
+
+let scheduler = new Scheduler();
+let roadBuilder = new RoadBuilder();
+scheduler.schedule(roadBuilder);
 
 export function loop() {
     Memory['enoughEnergyInReserve'] = Spawner.isEnoughEnergyInReserve();
@@ -58,7 +63,7 @@ export function loop() {
         }
         ReportStep(creep);
     }
-    Schedule();
+    scheduler.tick();
     Memory['roster'] = creepRoster;
     Spawner.autoSpawn();
 };
