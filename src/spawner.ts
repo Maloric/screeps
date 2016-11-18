@@ -93,7 +93,7 @@ export class Spawner {
         }, {
             name: 'upgrader',
             min: 1,
-            max: 1,
+            max: 4,
             tiers: [
                 {
                     cost: 650,
