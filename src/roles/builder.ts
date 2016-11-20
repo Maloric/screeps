@@ -21,7 +21,10 @@ export class Builder {
 
                 if (repairTargets.length > 0) {
                     // repairTargets.sort((a: any, b: any) => a.hits - b.hits);
-                    creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;
+                    let closestByPath = creep.pos.findClosestByPath(repairTargets);
+                    if (!!closestByPath) {
+                        creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;
+                    }
                 } else {
                     // console.log('No repair targets');
                 }

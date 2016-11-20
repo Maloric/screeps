@@ -304,6 +304,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    case STRUCTURE_EXTENSION:
 	                    case STRUCTURE_SPAWN:
 	                    case STRUCTURE_CONTAINER:
+	                    case STRUCTURE_STORAGE:
 	                        return structure.energy < structure.energyCapacity;
 	                    case STRUCTURE_STORAGE:
 	                        let s = structure;
@@ -478,7 +479,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    filter: (object) => object.hits < object.hitsMax
 	                });
 	                if (repairTargets.length > 0) {
-	                    creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;
+	                    let closestByPath = creep.pos.findClosestByPath(repairTargets);
+	                    if (!!closestByPath) {
+	                        creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;
+	                    }
 	                }
 	                else {
 	                    console.log('No repair targets');
