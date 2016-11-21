@@ -251,6 +251,13 @@ export class Spawner {
                 for (let i = 0; i < blueprint.tiers.length; i++) {
                     if (this.tryCreateCreep(spawn, blueprint, i)) {
                         break;
+                    } else {
+                        if (spawn.room.energyCapacityAvailable >= blueprint.tiers[i].cost) {
+                            console.log(`Need ${blueprint.tiers[i].cost} energy to spawn ${blueprint.name}
+                                but ${spawn.name} has ${spawn.room.energyAvailable}/${spawn.room.energyCapacityAvailable}.
+                                Waiting for more energy.`);
+                            break;
+                        }
                     };
                 }
                 fulfilled = false;

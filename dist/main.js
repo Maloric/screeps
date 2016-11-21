@@ -49,6 +49,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	const spawner_1 = __webpack_require__(16);
 	const behaviours_1 = __webpack_require__(3);
 	const scheduler_1 = __webpack_require__(17);
+	const roadBuilder_1 = __webpack_require__(18);
+	let scheduler = new scheduler_1.Scheduler();
+	let roadBuilder = new roadBuilder_1.RoadBuilder();
+	scheduler.schedule(roadBuilder);
 	function loop() {
 	    Memory['enoughEnergyInReserve'] = spawner_1.Spawner.isEnoughEnergyInReserve();
 	    spawner_1.Spawner.cleanup();
@@ -102,7 +106,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        }
 	        behaviours_1.ReportStep(creep);
 	    }
-	    scheduler_1.Schedule();
+	    scheduler.tick();
 	    Memory['roster'] = creepRoster;
 	    spawner_1.Spawner.autoSpawn();
 	}
@@ -485,7 +489,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    }
 	                }
 	                else {
-	                    console.log('No repair targets');
 	                }
 	            }
 	        }
@@ -736,6 +739,14 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    if (this.tryCreateCreep(spawn, blueprint, i)) {
 	                        break;
 	                    }
+	                    else {
+	                        if (spawn.room.energyCapacityAvailable >= blueprint.tiers[i].cost) {
+	                            console.log(`Need ${blueprint.tiers[i].cost} energy to spawn ${blueprint.name}
+	                                but ${spawn.name} has ${spawn.room.energyAvailable}/${spawn.room.energyCapacityAvailable}.
+	                                Waiting for more energy.`);
+	                            break;
+	                        }
+	                    }
 	                    ;
 	                }
 	                fulfilled = false;
@@ -955,8 +966,51 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	"use strict";
-	function Schedule() {
-	    if (Game.time % 20 === 0) {
+	class Scheduler {
+	    constructor() {
+	        this.taskArray = {};
+	        console.log("running constructor");
+	        if (!Memory['scheduledTasks']) {
+	            Memory['scheduledTasks'] = {};
+	        }
+	    }
+	    tick() {
+	        let currentTick = Game.time;
+	        let self = this;
+	        _.forEach(Memory['scheduledTasks'], function (task) {
+	            if (currentTick % task.interval === 0) {
+	                console.log(`Running: ${task.name}`);
+	                self.taskArray[task.name].run();
+	            }
+	        });
+	    }
+	    schedule(task) {
+	        console.log(`scheduling ${task.name} every ${task.interval} ticks`);
+	        Memory['scheduledTasks'][task.name] = {
+	            name: task.name,
+	            interval: task.interval
+	        };
+	        this.taskArray[task.name] = task;
+	    }
+	    unschedule(key) {
+	        delete Memory['scheduledTasks'][key];
+	    }
+	}
+	exports.Scheduler = Scheduler;
+	;
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	"use strict";
+	class RoadBuilder {
+	    constructor() {
+	        this.name = "ROAD_BUILDER";
+	        this.interval = 200;
+	    }
+	    run() {
 	        let highPriorityPaths = _.filter(Memory['paths'], (path) => {
 	            return path.count > 10;
 	        });
@@ -980,7 +1034,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        });
 	    }
 	}
-	exports.Schedule = Schedule;
+	exports.RoadBuilder = RoadBuilder;
 	;
 
 
