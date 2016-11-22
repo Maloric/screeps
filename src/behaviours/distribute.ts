@@ -1,4 +1,4 @@
-export function Distribute(creep: Creep) {
+export function Distribute(creep: Creep, includeTower: boolean = true) {
     if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
         let targets = <Structure[]>creep.room.find(FIND_STRUCTURES, {
             filter: (structure: any) => {
@@ -18,14 +18,17 @@ export function Distribute(creep: Creep) {
             }
         });
         if (targets.length > 0) {
-            // Tower should have minimum 850 energy first
-            let tower = _.find(targets, (s: any) => {
-                return s.structureType === STRUCTURE_TOWER
-                    && s.energy < s.energyCapacity * 0.85;
-            });
+            let tower: any;
+            if (!!includeTower) {
+                // Tower should have minimum 850 energy first
+                tower = _.find(targets, (s: any) => {
+                    return s.structureType === STRUCTURE_TOWER
+                        && s.energy < s.energyCapacity * 0.85;
+                });
+            }
 
-            if (tower) {
-                creep.memory.target = tower.id;
+            if (!!tower) {
+                creep.memory.target = (<StructureTower>tower).id;
             } else {
                 // Only fill storage above 500 if there are no other valid targets
                 let secondaryTargets = _.filter(targets, (s: any) => {

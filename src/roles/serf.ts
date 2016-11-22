@@ -23,7 +23,7 @@ export class Serf {
                 }
             }
         } else {
-            Distribute(creep);
+            Distribute(creep, false);
         }
     }
 }

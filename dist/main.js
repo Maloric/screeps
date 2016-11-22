@@ -303,7 +303,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	"use strict";
-	function Distribute(creep) {
+	function Distribute(creep, includeTower = true) {
 	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
 	        let targets = creep.room.find(FIND_STRUCTURES, {
 	            filter: (structure) => {
@@ -323,11 +323,14 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }
 	        });
 	        if (targets.length > 0) {
-	            let tower = _.find(targets, (s) => {
-	                return s.structureType === STRUCTURE_TOWER
-	                    && s.energy < s.energyCapacity * 0.85;
-	            });
-	            if (tower) {
+	            let tower;
+	            if (!!includeTower) {
+	                tower = _.find(targets, (s) => {
+	                    return s.structureType === STRUCTURE_TOWER
+	                        && s.energy < s.energyCapacity * 0.85;
+	                });
+	            }
+	            if (!!tower) {
 	                creep.memory.target = tower.id;
 	            }
 	            else {
@@ -628,7 +631,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	        else {
-	            index_1.Distribute(creep);
+	            index_1.Distribute(creep, false);
 	        }
 	    }
 	}
