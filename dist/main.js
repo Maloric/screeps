@@ -46,11 +46,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	const index_1 = __webpack_require__(1);
-	const spawner_1 = __webpack_require__(16);
+	const spawner_1 = __webpack_require__(17);
 	const behaviours_1 = __webpack_require__(3);
-	const scheduler_1 = __webpack_require__(17);
-	const roadBuilder_1 = __webpack_require__(18);
-	const towers_1 = __webpack_require__(19);
+	const scheduler_1 = __webpack_require__(18);
+	const roadBuilder_1 = __webpack_require__(19);
+	const towers_1 = __webpack_require__(20);
 	let scheduler = new scheduler_1.Scheduler();
 	let roadBuilder = new roadBuilder_1.RoadBuilder();
 	scheduler.schedule(roadBuilder);
@@ -110,17 +110,17 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	var archer_1 = __webpack_require__(2);
 	exports.Archer = archer_1.Archer;
-	var builder_1 = __webpack_require__(10);
+	var builder_1 = __webpack_require__(11);
 	exports.Builder = builder_1.Builder;
-	var harvester_1 = __webpack_require__(11);
+	var harvester_1 = __webpack_require__(12);
 	exports.Harvester = harvester_1.Harvester;
-	var upgrader_1 = __webpack_require__(12);
+	var upgrader_1 = __webpack_require__(13);
 	exports.Upgrader = upgrader_1.Upgrader;
-	var distributor_1 = __webpack_require__(13);
+	var distributor_1 = __webpack_require__(14);
 	exports.Distributor = distributor_1.Distributor;
-	var serf_1 = __webpack_require__(14);
+	var serf_1 = __webpack_require__(15);
 	exports.Serf = serf_1.Serf;
-	var healer_1 = __webpack_require__(15);
+	var healer_1 = __webpack_require__(16);
 	exports.Healer = healer_1.Healer;
 
 
@@ -175,13 +175,15 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	exports.Harvest = harvest_1.Harvest;
 	var recover_1 = __webpack_require__(5);
 	exports.Recover = recover_1.Recover;
-	var distribute_1 = __webpack_require__(6);
+	var recoverDropped_1 = __webpack_require__(6);
+	exports.RecoverDropped = recoverDropped_1.RecoverDropped;
+	var distribute_1 = __webpack_require__(7);
 	exports.Distribute = distribute_1.Distribute;
-	var checkoutEnergy_1 = __webpack_require__(7);
+	var checkoutEnergy_1 = __webpack_require__(8);
 	exports.CheckoutEnergy = checkoutEnergy_1.CheckoutEnergy;
-	var idle_1 = __webpack_require__(8);
+	var idle_1 = __webpack_require__(9);
 	exports.Idle = idle_1.Idle;
-	var reportStep_1 = __webpack_require__(9);
+	var reportStep_1 = __webpack_require__(10);
 	exports.ReportStep = reportStep_1.ReportStep;
 
 
@@ -222,9 +224,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const recoverDropped_1 = __webpack_require__(6);
 	function Recover(creep) {
 	    let harvesters = Memory['roster']['harvester'];
 	    let needyHarvesters = _.filter(harvesters, (h) => Game.creeps[h].memory['distributors'].length === 0);
@@ -241,22 +244,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            console.log('Removed stale harvester from ' + creep.name);
 	            return;
 	        }
-	        let droppedEnergy = _.sortBy(creep.room.find(FIND_DROPPED_ENERGY, {
-	            filter: (x) => {
-	                return x.energy > 1000;
-	            }
-	        }), (x) => {
-	            return 0 - x.energy;
-	        });
-	        if (droppedEnergy.length === 0) {
-	            droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 10);
-	        }
-	        if (droppedEnergy.length) {
-	            if (creep.pickup(droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
-	                creep.moveTo(droppedEnergy[0]);
-	            }
-	        }
-	        else {
+	        if (!recoverDropped_1.RecoverDropped(creep)) {
 	            if (creep.pos.getRangeTo(h) > 1) {
 	                creep.moveTo(h);
 	                return;
@@ -285,6 +273,33 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function RecoverDropped(creep) {
+	    let droppedEnergy = _.sortBy(creep.room.find(FIND_DROPPED_ENERGY, {
+	        filter: (x) => {
+	            return x.energy > 1000;
+	        }
+	    }), (x) => {
+	        return 0 - x.energy;
+	    });
+	    if (droppedEnergy.length === 0) {
+	        droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 10);
+	    }
+	    if (droppedEnergy.length) {
+	        if (creep.pickup(droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
+	            creep.moveTo(droppedEnergy[0]);
+	        }
+	        return true;
+	    }
+	    return false;
+	}
+	exports.RecoverDropped = RecoverDropped;
+
+
+/***/ },
+/* 7 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -351,7 +366,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -404,7 +419,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -418,7 +433,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -447,7 +462,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -522,7 +537,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -536,7 +551,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -565,7 +580,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -584,7 +599,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -592,6 +607,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	class Serf {
 	    static run(creep) {
 	        if (creep.carry.energy < creep.carryCapacity) {
+	            if (index_1.RecoverDropped(creep)) {
+	                return;
+	            }
 	            if (!creep.memory.target) {
 	                let target = creep.pos.findClosestByPath(creep.room.find(FIND_SOURCES));
 	                creep.memory.target = target.id;
@@ -618,7 +636,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -659,7 +677,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -951,7 +969,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -990,7 +1008,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1028,7 +1046,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	"use strict";

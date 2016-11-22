@@ -1,7 +1,10 @@
-import { Distribute } from '../behaviours/index';
+import { Distribute, RecoverDropped } from '../behaviours/index';
 export class Serf {
     static run(creep: Creep) {
         if (creep.carry.energy < creep.carryCapacity) {
+            if (RecoverDropped(creep)) {
+                return;
+            }
             if (!creep.memory.target) {
                 let target = <Source>creep.pos.findClosestByPath(creep.room.find(FIND_SOURCES));
                 creep.memory.target = target.id;

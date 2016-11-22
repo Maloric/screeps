@@ -1,3 +1,4 @@
+import { RecoverDropped } from './recoverDropped';
 export function Recover(creep: Creep) {
     let harvesters: string[] = Memory['roster']['harvester'];
 
@@ -18,23 +19,7 @@ export function Recover(creep: Creep) {
             return;
         }
 
-        let droppedEnergy = _.sortBy(creep.room.find(FIND_DROPPED_ENERGY, {
-            filter: (x: any) => {
-                return x.energy > 1000;
-            }
-        }), (x: any) => {
-            return 0 - x.energy;
-        });
-
-        if (droppedEnergy.length === 0) {
-            droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 10);
-        }
-
-        if (droppedEnergy.length) {
-            if (creep.pickup(<Resource>droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(<Resource>droppedEnergy[0]);
-            }
-        } else {
+        if (!RecoverDropped(creep)) {
             if (creep.pos.getRangeTo(h) > 1) {
                 creep.moveTo(h);
                 return;
