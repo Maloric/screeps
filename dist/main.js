@@ -50,26 +50,15 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	const behaviours_1 = __webpack_require__(3);
 	const scheduler_1 = __webpack_require__(17);
 	const roadBuilder_1 = __webpack_require__(18);
+	const towers_1 = __webpack_require__(19);
 	let scheduler = new scheduler_1.Scheduler();
 	let roadBuilder = new roadBuilder_1.RoadBuilder();
 	scheduler.schedule(roadBuilder);
 	function loop() {
 	    Memory['enoughEnergyInReserve'] = spawner_1.Spawner.isEnoughEnergyInReserve();
 	    spawner_1.Spawner.cleanup();
-	    let tower = Game.getObjectById('5819fe430de1de3555de348d');
-	    if (tower) {
-	        let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-	        if (closestHostile) {
-	            tower.attack(closestHostile);
-	        }
-	        if (tower.energy > tower.energyCapacity * 0.85) {
-	            let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-	                filter: (structure) => structure.hits < structure.hitsMax
-	            });
-	            if (closestDamagedStructure) {
-	                tower.repair(closestDamagedStructure);
-	            }
-	        }
+	    for (let roomName in Game.rooms) {
+	        towers_1.RunTowers(roomName);
 	    }
 	    let creepRoster = {};
 	    for (let name in Game.creeps) {
@@ -1036,6 +1025,46 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.RoadBuilder = RoadBuilder;
 	;
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function RunTowers(roomName) {
+	    var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_TOWER } });
+	    for (let i = 0; i < towers.length; i++) {
+	        let tower = towers[i];
+	        let closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+	        if (closestHostile) {
+	            tower.attack(closestHostile);
+	        }
+	        else {
+	            let crumblingWalls = tower.room.find(FIND_STRUCTURES, {
+	                filter: (structure) => {
+	                    return structure.structureType === STRUCTURE_WALL
+	                        && ((structure.hits < 50000) && (structure.hits > 0));
+	                }
+	            });
+	            if (crumblingWalls.length > 0) {
+	                let target = _.sortBy(crumblingWalls, (wall) => {
+	                    return wall.hits;
+	                })[0];
+	                tower.repair(target);
+	            }
+	            else if (tower.energy > tower.energyCapacity * 0.85) {
+	                let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+	                    filter: (structure) => structure.hits < structure.hitsMax
+	                });
+	                if (closestDamagedStructure) {
+	                    tower.repair(closestDamagedStructure);
+	                }
+	            }
+	        }
+	    }
+	}
+	exports.RunTowers = RunTowers;
 
 
 /***/ }

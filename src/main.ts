@@ -3,6 +3,7 @@ import { Spawner } from './spawner';
 import { ReportStep } from './behaviours';
 import { Scheduler } from './scheduler';
 import { RoadBuilder } from './tasks/roadBuilder';
+import { RunTowers } from './towers';
 
 let scheduler = new Scheduler();
 let roadBuilder = new RoadBuilder();
@@ -11,21 +12,9 @@ scheduler.schedule(roadBuilder);
 export function loop() {
     Memory['enoughEnergyInReserve'] = Spawner.isEnoughEnergyInReserve();
     Spawner.cleanup();
-    let tower = <StructureTower>Game.getObjectById('5819fe430de1de3555de348d');
-    if (tower) {
-        let closestHostile = <Creep>tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (closestHostile) {
-            tower.attack(closestHostile);
-        }
 
-        if (tower.energy > tower.energyCapacity * 0.85) {
-            let closestDamagedStructure = <Structure>tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure: any) => structure.hits < structure.hitsMax
-            });
-            if (closestDamagedStructure) {
-                tower.repair(closestDamagedStructure);
-            }
-        }
+    for (let roomName in Game.rooms) {
+        RunTowers(roomName);
     }
 
     let creepRoster: any = {};
