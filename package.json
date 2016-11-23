@@ -10,9 +10,8 @@
     "precommit": "npm run build",
     "commit": "git add . && git commit",
     "postcommit": "git pull -r && git push",
-    "pretmp": "npm run build && rimraf ~/Library/Application\\ Support/Screeps/scripts/screeps.com/tutorial-1",
-    "tmp": "cp -R ./dist/ ~/Library/Application\\ Support/Screeps/scripts/screeps.com/tutorial-1"
-
+    "prelocal": "npm run build && rimraf ~/Library/Application\\ Support/Screeps/scripts/screeps.com/tutorial-1",
+    "local": "copyfiles -f ./dist/main.js C:\\Users\\Maloric\\AppData\\Local\\Screeps\\scripts\\86_27_233_223___21025\\default"
   },
   "contributors": [
     "Jamie Morris <jamie@maloric.com>"
@@ -37,6 +36,7 @@
   "homepage": "https://github.com/maloric/screeps#readme",
   "devDependencies": {
     "@types/node": "^6.0.41",
+    "copyfiles": "^1.0.0",
     "pre-commit": "^1.1.3",
     "prepend-file-cli": "^1.0.4",
     "rimraf": "^2.5.4",

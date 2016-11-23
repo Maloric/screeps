@@ -1,5 +1,5 @@
 export function CheckoutEnergy(creep: Creep): void {
-    if (!Memory['enoughEnergyInReserve']) {
+    if (!Memory['roster']['harvester'] || Memory['roster']['harvester'].length < 2) {
         creep.memory.energyFreeze = true;
         return;
     } else {

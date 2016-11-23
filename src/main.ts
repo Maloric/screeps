@@ -10,7 +10,6 @@ let roadBuilder = new RoadBuilder();
 scheduler.schedule(roadBuilder);
 
 export function loop() {
-    Memory['enoughEnergyInReserve'] = Spawner.isEnoughEnergyInReserve();
     Spawner.cleanup();
 
     for (let roomName in Game.rooms) {

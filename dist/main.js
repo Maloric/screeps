@@ -55,7 +55,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	let roadBuilder = new roadBuilder_1.RoadBuilder();
 	scheduler.schedule(roadBuilder);
 	function loop() {
-	    Memory['enoughEnergyInReserve'] = spawner_1.Spawner.isEnoughEnergyInReserve();
 	    spawner_1.Spawner.cleanup();
 	    for (let roomName in Game.rooms) {
 	        towers_1.RunTowers(roomName);
@@ -374,7 +373,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	function CheckoutEnergy(creep) {
-	    if (!Memory['enoughEnergyInReserve']) {
+	    if (!Memory['roster']['harvester'] || Memory['roster']['harvester'].length < 2) {
 	        creep.memory.energyFreeze = true;
 	        return;
 	    }
@@ -483,7 +482,18 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        if (creep.memory.building && !creep.memory.target) {
 	            let buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
 	            if (buildTargets.length > 0) {
-	                creep.memory.target = creep.pos.findClosestByPath(buildTargets).id;
+	                let secondaryTargets = _.filter(buildTargets, (tgt) => {
+	                    return tgt.structureType !== STRUCTURE_EXTENSION;
+	                });
+	                let primaryTargets = _.difference(buildTargets, secondaryTargets);
+	                let target;
+	                if (primaryTargets.length > 0) {
+	                    target = creep.pos.findClosestByPath(primaryTargets);
+	                }
+	                else {
+	                    target = creep.pos.findClosestByPath(secondaryTargets);
+	                }
+	                creep.memory.target = target.id;
 	            }
 	            else {
 	                let repairTargets = creep.room.find(FIND_STRUCTURES, {
@@ -764,9 +774,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	        return fulfilled;
-	    }
-	    static isEnoughEnergyInReserve() {
-	        return true;
 	    }
 	    static tryCreateCreep(spawn, blueprint, tierIndex) {
 	        if (blueprint.force
