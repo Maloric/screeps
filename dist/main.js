@@ -46,11 +46,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	const index_1 = __webpack_require__(1);
-	const spawner_1 = __webpack_require__(18);
+	const spawner_1 = __webpack_require__(19);
 	const behaviours_1 = __webpack_require__(3);
-	const scheduler_1 = __webpack_require__(19);
-	const tasks_1 = __webpack_require__(20);
-	const towers_1 = __webpack_require__(23);
+	const scheduler_1 = __webpack_require__(20);
+	const tasks_1 = __webpack_require__(21);
+	const towers_1 = __webpack_require__(24);
 	let scheduler = new scheduler_1.Scheduler();
 	scheduler.schedule(new tasks_1.RoadBuilder());
 	scheduler.schedule(new tasks_1.CacheCleaner());
@@ -109,17 +109,17 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	var archer_1 = __webpack_require__(2);
 	exports.Archer = archer_1.Archer;
-	var builder_1 = __webpack_require__(12);
+	var builder_1 = __webpack_require__(13);
 	exports.Builder = builder_1.Builder;
-	var harvester_1 = __webpack_require__(13);
+	var harvester_1 = __webpack_require__(14);
 	exports.Harvester = harvester_1.Harvester;
-	var upgrader_1 = __webpack_require__(14);
+	var upgrader_1 = __webpack_require__(15);
 	exports.Upgrader = upgrader_1.Upgrader;
-	var distributor_1 = __webpack_require__(15);
+	var distributor_1 = __webpack_require__(16);
 	exports.Distributor = distributor_1.Distributor;
-	var serf_1 = __webpack_require__(16);
+	var serf_1 = __webpack_require__(17);
 	exports.Serf = serf_1.Serf;
-	var healer_1 = __webpack_require__(17);
+	var healer_1 = __webpack_require__(18);
 	exports.Healer = healer_1.Healer;
 
 
@@ -178,11 +178,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	exports.RecoverDropped = recoverDropped_1.RecoverDropped;
 	var distribute_1 = __webpack_require__(7);
 	exports.Distribute = distribute_1.Distribute;
-	var checkoutEnergy_1 = __webpack_require__(9);
+	var checkoutEnergy_1 = __webpack_require__(10);
 	exports.CheckoutEnergy = checkoutEnergy_1.CheckoutEnergy;
-	var idle_1 = __webpack_require__(10);
+	var idle_1 = __webpack_require__(11);
 	exports.Idle = idle_1.Idle;
-	var reportStep_1 = __webpack_require__(11);
+	var reportStep_1 = __webpack_require__(12);
 	exports.ReportStep = reportStep_1.ReportStep;
 
 
@@ -303,7 +303,26 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	const cacheHelper_1 = __webpack_require__(8);
+	const util_1 = __webpack_require__(9);
 	function Distribute(creep, includeTower = true) {
+	    let tryMove = (creep) => {
+	        if (creep.memory._move) {
+	            let direction = parseInt(creep.memory._move.path.substr(0, 1));
+	            let dest = util_1.GetPositionByDirection(creep.pos, direction);
+	            let adjacentCreeps = dest.lookFor(LOOK_CREEPS);
+	            if (adjacentCreeps && adjacentCreeps.length > 0) {
+	                let adjacentCreep = adjacentCreeps[0];
+	                if (adjacentCreep.memory['role'] === 'distributor') {
+	                    console.log(`Daisychaining from ${creep.name} to ${adjacentCreep.name}`);
+	                    creep.transfer(adjacentCreep, RESOURCE_ENERGY);
+	                    delete creep.memory._move;
+	                    delete adjacentCreep.memory._move;
+	                    delete creep['memory']['target'];
+	                    delete adjacentCreep['memory']['target'];
+	                }
+	            }
+	        }
+	    };
 	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
 	        let cacheKey = `${creep.room.name}_distributeTargets`;
 	        let targets = cacheHelper_1.Cache.get(cacheKey, () => creep.room.find(FIND_STRUCTURES, {
@@ -347,6 +366,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                if (closest) {
 	                    creep.memory.target = closest.id;
 	                }
+	                else {
+	                    console.log(`${creep.name} has no path to target`);
+	                }
 	            }
 	        }
 	    }
@@ -358,7 +380,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                delete creep.memory.target;
 	                break;
 	            case ERR_NOT_IN_RANGE:
-	                creep.moveTo(t);
+	                tryMove(creep);
 	                break;
 	            case ERR_INVALID_TARGET:
 	                delete creep.memory.target;
@@ -406,6 +428,48 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function GetPositionByDirection(pos, direction) {
+	    let newPos = pos;
+	    switch (direction) {
+	        case (TOP_LEFT):
+	            newPos.y--;
+	            newPos.x--;
+	            break;
+	        case (TOP):
+	            newPos.y--;
+	            break;
+	        case (TOP_RIGHT):
+	            newPos.y--;
+	            newPos.x++;
+	            break;
+	        case (LEFT):
+	            newPos.x--;
+	            break;
+	        case (RIGHT):
+	            newPos.x++;
+	            break;
+	        case (BOTTOM_LEFT):
+	            newPos.y++;
+	            newPos.x--;
+	            break;
+	        case (BOTTOM):
+	            newPos.y++;
+	            break;
+	        case (BOTTOM_RIGHT):
+	            newPos.y++;
+	            newPos.x++;
+	            break;
+	    }
+	    return newPos;
+	}
+	exports.GetPositionByDirection = GetPositionByDirection;
+
+
+/***/ },
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -458,7 +522,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -472,7 +536,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -501,7 +565,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -592,7 +656,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -606,7 +670,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -635,7 +699,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -654,7 +718,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -691,7 +755,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -732,7 +796,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1028,7 +1092,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1066,18 +1130,18 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var roadBuilder_1 = __webpack_require__(21);
+	var roadBuilder_1 = __webpack_require__(22);
 	exports.RoadBuilder = roadBuilder_1.RoadBuilder;
-	var cacheCleaner_1 = __webpack_require__(22);
+	var cacheCleaner_1 = __webpack_require__(23);
 	exports.CacheCleaner = cacheCleaner_1.CacheCleaner;
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1115,7 +1179,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1132,7 +1196,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	"use strict";

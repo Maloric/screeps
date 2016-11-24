@@ -1,5 +1,26 @@
 import { Cache } from '../cacheHelper';
+import { GetPositionByDirection } from '../util';
 export function Distribute(creep: Creep, includeTower: boolean = true) {
+
+    let tryMove = (creep: Creep) => {
+        if (creep.memory._move) {
+            let direction = parseInt(creep.memory._move.path.substr(0, 1));
+            let dest = GetPositionByDirection(creep.pos, direction);
+            let adjacentCreeps = dest.lookFor(LOOK_CREEPS);
+            if (adjacentCreeps && adjacentCreeps.length > 0) {
+                let adjacentCreep = <Creep>adjacentCreeps[0];
+                if (adjacentCreep.memory['role'] === 'distributor') {
+                    console.log(`Daisychaining from ${creep.name} to ${adjacentCreep.name}`);
+                    creep.transfer(adjacentCreep, RESOURCE_ENERGY);
+                    delete creep.memory._move;
+                    delete adjacentCreep.memory._move;
+                    delete creep['memory']['target'];
+                    delete adjacentCreep['memory']['target'];
+                }
+            }
+        }
+    };
+
     if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
         let cacheKey = `${creep.room.name}_distributeTargets`;
         let targets = Cache.get(cacheKey, () => <Structure[]>creep.room.find(FIND_STRUCTURES, {
@@ -44,6 +65,8 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                 }
                 if (closest) {
                     creep.memory.target = closest.id;
+                } else {
+                    console.log(`${creep.name} has no path to target`);
                 }
             }
         }
@@ -57,7 +80,7 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                 delete creep.memory.target;
                 break;
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(t);
+                tryMove(creep);
                 break;
             case ERR_INVALID_TARGET:
                 delete creep.memory.target;
