@@ -751,11 +751,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	const index_1 = __webpack_require__(4);
 	class Distributor {
 	    static run(creep) {
-	        if (creep.carry.energy < creep.carryCapacity) {
-	            index_1.Recover(creep);
+	        if (creep.carry.energy > 0) {
+	            index_1.Distribute(creep);
 	        }
 	        else {
-	            index_1.Distribute(creep);
+	            index_1.Recover(creep);
 	        }
 	    }
 	}
