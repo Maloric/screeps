@@ -2,12 +2,12 @@ import { Harvester, Upgrader, Builder, Archer, Serf, Distributor, Healer } from 
 import { Spawner } from './spawner';
 import { ReportStep } from './behaviours';
 import { Scheduler } from './scheduler';
-import { RoadBuilder } from './tasks/roadBuilder';
+import { RoadBuilder, CacheCleaner } from './tasks';
 import { RunTowers } from './towers';
 
 let scheduler = new Scheduler();
-let roadBuilder = new RoadBuilder();
-scheduler.schedule(roadBuilder);
+scheduler.schedule(new RoadBuilder());
+scheduler.schedule(new CacheCleaner());
 
 export function loop() {
     Spawner.cleanup();
@@ -47,7 +47,7 @@ export function loop() {
                 Healer.run(creep);
                 break;
             default:
-                console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);
+                console.log(`Invalid creep role on ${name}: ${creep.memory.role}`);
         }
         ReportStep(creep);
     }

@@ -1,4 +1,6 @@
 import { CheckoutEnergy } from '../behaviours/index';
+import { Cache } from '../cacheHelper';
+
 export class Builder {
     static run(creep: Creep) {
         if (creep.carry.energy === 0) {
@@ -10,7 +12,11 @@ export class Builder {
         }
 
         if (creep.memory.building && !creep.memory.target) {
-            let buildTargets = <ConstructionSite[]>creep.room.find(FIND_CONSTRUCTION_SITES);
+            let cacheKey = `${creep.room.name}_buildTargets`;
+            let buildTargets = <ConstructionSite[]>Cache.get(cacheKey, () => {
+                return creep.room.find(FIND_CONSTRUCTION_SITES);
+            });
+
             if (buildTargets.length > 0) {
                 let secondaryTargets = _.filter(buildTargets, (tgt: ConstructionSite) => {
                     return tgt.structureType !== STRUCTURE_EXTENSION;
@@ -27,10 +33,10 @@ export class Builder {
 
                 creep.memory.target = target.id;
             } else {
-                // console.log(`${creep.name} is repairing`);
-                let repairTargets = <Structure[]>creep.room.find(FIND_STRUCTURES, {
+                let cacheKey = `${creep.room.name}_repairTargets`;
+                let repairTargets = <Structure[]>Cache.get(cacheKey, () => creep.room.find(FIND_STRUCTURES, {
                     filter: (object: any) => object.hits < object.hitsMax
-                });
+                }));
 
                 if (repairTargets.length > 0) {
                     // repairTargets.sort((a: any, b: any) => a.hits - b.hits);

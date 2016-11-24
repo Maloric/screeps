@@ -1,6 +1,6 @@
 export class RoadBuilder implements Task {
 
-    name: string = "ROAD_BUILDER";
+    name: string = 'ROAD_BUILDER';
 
     interval: number = 200;
 
@@ -28,6 +28,6 @@ export class RoadBuilder implements Task {
             }
             console.log(posKey);
             Memory['paths'][posKey].count = -1;
-        })
+        });
     }
 };

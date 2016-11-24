@@ -1,6 +1,8 @@
+import { Cache } from '../cacheHelper';
 export function Distribute(creep: Creep, includeTower: boolean = true) {
     if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
-        let targets = <Structure[]>creep.room.find(FIND_STRUCTURES, {
+        let cacheKey = `${creep.room.name}_distributeTargets`;
+        let targets = Cache.get(cacheKey, () => <Structure[]>creep.room.find(FIND_STRUCTURES, {
             filter: (structure: any) => {
                 switch (structure.structureType) {
                     case STRUCTURE_TOWER:
@@ -16,7 +18,7 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                         return false;
                 }
             }
-        });
+        }));
         if (targets.length > 0) {
             let tower: any;
             if (!!includeTower) {

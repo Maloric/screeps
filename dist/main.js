@@ -46,14 +46,14 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	const index_1 = __webpack_require__(1);
-	const spawner_1 = __webpack_require__(17);
+	const spawner_1 = __webpack_require__(18);
 	const behaviours_1 = __webpack_require__(3);
-	const scheduler_1 = __webpack_require__(18);
-	const roadBuilder_1 = __webpack_require__(19);
-	const towers_1 = __webpack_require__(20);
+	const scheduler_1 = __webpack_require__(19);
+	const tasks_1 = __webpack_require__(20);
+	const towers_1 = __webpack_require__(23);
 	let scheduler = new scheduler_1.Scheduler();
-	let roadBuilder = new roadBuilder_1.RoadBuilder();
-	scheduler.schedule(roadBuilder);
+	scheduler.schedule(new tasks_1.RoadBuilder());
+	scheduler.schedule(new tasks_1.CacheCleaner());
 	function loop() {
 	    spawner_1.Spawner.cleanup();
 	    for (let roomName in Game.rooms) {
@@ -90,7 +90,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                index_1.Healer.run(creep);
 	                break;
 	            default:
-	                console.warn(`Invalid creep role on ${name}: ${creep.memory.role}`);
+	                console.log(`Invalid creep role on ${name}: ${creep.memory.role}`);
 	        }
 	        behaviours_1.ReportStep(creep);
 	    }
@@ -109,17 +109,17 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	var archer_1 = __webpack_require__(2);
 	exports.Archer = archer_1.Archer;
-	var builder_1 = __webpack_require__(11);
+	var builder_1 = __webpack_require__(12);
 	exports.Builder = builder_1.Builder;
-	var harvester_1 = __webpack_require__(12);
+	var harvester_1 = __webpack_require__(13);
 	exports.Harvester = harvester_1.Harvester;
-	var upgrader_1 = __webpack_require__(13);
+	var upgrader_1 = __webpack_require__(14);
 	exports.Upgrader = upgrader_1.Upgrader;
-	var distributor_1 = __webpack_require__(14);
+	var distributor_1 = __webpack_require__(15);
 	exports.Distributor = distributor_1.Distributor;
-	var serf_1 = __webpack_require__(15);
+	var serf_1 = __webpack_require__(16);
 	exports.Serf = serf_1.Serf;
-	var healer_1 = __webpack_require__(16);
+	var healer_1 = __webpack_require__(17);
 	exports.Healer = healer_1.Healer;
 
 
@@ -178,11 +178,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	exports.RecoverDropped = recoverDropped_1.RecoverDropped;
 	var distribute_1 = __webpack_require__(7);
 	exports.Distribute = distribute_1.Distribute;
-	var checkoutEnergy_1 = __webpack_require__(8);
+	var checkoutEnergy_1 = __webpack_require__(9);
 	exports.CheckoutEnergy = checkoutEnergy_1.CheckoutEnergy;
-	var idle_1 = __webpack_require__(9);
+	var idle_1 = __webpack_require__(10);
 	exports.Idle = idle_1.Idle;
-	var reportStep_1 = __webpack_require__(10);
+	var reportStep_1 = __webpack_require__(11);
 	exports.ReportStep = reportStep_1.ReportStep;
 
 
@@ -299,12 +299,14 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const cacheHelper_1 = __webpack_require__(8);
 	function Distribute(creep, includeTower = true) {
 	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
-	        let targets = creep.room.find(FIND_STRUCTURES, {
+	        let cacheKey = `${creep.room.name}_distributeTargets`;
+	        let targets = cacheHelper_1.Cache.get(cacheKey, () => creep.room.find(FIND_STRUCTURES, {
 	            filter: (structure) => {
 	                switch (structure.structureType) {
 	                    case STRUCTURE_TOWER:
@@ -320,7 +322,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                        return false;
 	                }
 	            }
-	        });
+	        }));
 	        if (targets.length > 0) {
 	            let tower;
 	            if (!!includeTower) {
@@ -369,6 +371,41 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+	class Cache {
+	    static get(cacheKey, dataFn = null) {
+	        let res = Memory['cache'][cacheKey];
+	        if (!res) {
+	            if (dataFn !== null) {
+	                res = dataFn();
+	                if (res.id) {
+	                    res = res.id;
+	                }
+	                else if (res.length && res[0] && res[0].id) {
+	                    res = res.map((x) => x.id);
+	                }
+	                Memory['cache'][cacheKey] = res;
+	            }
+	            else {
+	                console.log(`Error caching ${cacheKey}.  No dataFn defined.`);
+	            }
+	        }
+	        if (res.length) {
+	            res = res.map((x) => Game.getObjectById(x));
+	        }
+	        else {
+	            res = Game.getObjectById(res);
+	        }
+	        return res;
+	    }
+	}
+	exports.Cache = Cache;
+
+
+/***/ },
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -421,7 +458,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -435,7 +472,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -464,11 +501,12 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	const index_1 = __webpack_require__(3);
+	const cacheHelper_1 = __webpack_require__(8);
 	class Builder {
 	    static run(creep) {
 	        if (creep.carry.energy === 0) {
@@ -480,7 +518,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            creep.say('Building');
 	        }
 	        if (creep.memory.building && !creep.memory.target) {
-	            let buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
+	            let cacheKey = `${creep.room.name}_buildTargets`;
+	            let buildTargets = cacheHelper_1.Cache.get(cacheKey, () => {
+	                return creep.room.find(FIND_CONSTRUCTION_SITES);
+	            });
 	            if (buildTargets.length > 0) {
 	                let secondaryTargets = _.filter(buildTargets, (tgt) => {
 	                    return tgt.structureType !== STRUCTURE_EXTENSION;
@@ -496,9 +537,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                creep.memory.target = target.id;
 	            }
 	            else {
-	                let repairTargets = creep.room.find(FIND_STRUCTURES, {
+	                let cacheKey = `${creep.room.name}_repairTargets`;
+	                let repairTargets = cacheHelper_1.Cache.get(cacheKey, () => creep.room.find(FIND_STRUCTURES, {
 	                    filter: (object) => object.hits < object.hitsMax
-	                });
+	                }));
 	                if (repairTargets.length > 0) {
 	                    let closestByPath = creep.pos.findClosestByPath(repairTargets);
 	                    if (!!closestByPath) {
@@ -550,7 +592,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -564,7 +606,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -593,7 +635,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -612,7 +654,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -649,7 +691,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -690,7 +732,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -979,7 +1021,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1018,13 +1060,24 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 19 */
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var roadBuilder_1 = __webpack_require__(21);
+	exports.RoadBuilder = roadBuilder_1.RoadBuilder;
+	var cacheCleaner_1 = __webpack_require__(22);
+	exports.CacheCleaner = cacheCleaner_1.CacheCleaner;
+
+
+/***/ },
+/* 21 */
 /***/ function(module, exports) {
 
 	"use strict";
 	class RoadBuilder {
 	    constructor() {
-	        this.name = "ROAD_BUILDER";
+	        this.name = 'ROAD_BUILDER';
 	        this.interval = 200;
 	    }
 	    run() {
@@ -1056,7 +1109,24 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 20 */
+/* 22 */
+/***/ function(module, exports) {
+
+	"use strict";
+	class CacheCleaner {
+	    constructor() {
+	        this.name = 'CACHE_CLEANER';
+	        this.interval = 5;
+	    }
+	    run() {
+	        Memory['cache'] = {};
+	    }
+	}
+	exports.CacheCleaner = CacheCleaner;
+
+
+/***/ },
+/* 23 */
 /***/ function(module, exports) {
 
 	"use strict";
