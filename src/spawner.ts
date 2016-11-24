@@ -252,7 +252,22 @@ export class Spawner {
                     if (this.tryCreateCreep(spawn, blueprint, i)) {
                         break;
                     } else {
-                        if (spawn.room.energyCapacityAvailable >= blueprint.tiers[i].cost) {
+                        if (spawn.room.energyCapacityAvailable >= blueprint.tiers[i].cost
+                            && (
+                                // Only delay if someone is actually harvesting energy
+                                (
+                                    Memory['roster']['serf'] &&
+                                    Memory['roster']['serf'].length > 0
+                                )
+                                ||
+                                (
+                                    Memory['roster']['harvester'] &&
+                                    Memory['roster']['harvester'].length > 0 &&
+                                    Memory['roster']['distributor'] &&
+                                    Memory['roster']['distributor'].length > 0
+                                )
+                            )
+                        ) {
                             console.log(`Need ${blueprint.tiers[i].cost} energy to spawn ${blueprint.name}
                                 but ${spawn.name} has ${spawn.room.energyAvailable}/${spawn.room.energyCapacityAvailable}.
                                 Waiting for more energy.`);

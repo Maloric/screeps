@@ -3,8 +3,8 @@ export class Scheduler {
     taskArray: any = {};
 
     constructor() {
-        console.log("running constructor");
-        if(!Memory['scheduledTasks']){
+        // console.log("running constructor");
+        if (!Memory['scheduledTasks']) {
             Memory['scheduledTasks'] = {};
         }
     }
@@ -12,7 +12,7 @@ export class Scheduler {
     tick(): void {
         let currentTick = Game.time;
         let self = this;
-        _.forEach(Memory['scheduledTasks'], function(task: any){
+        _.forEach(Memory['scheduledTasks'], function(task: any) {
             if (currentTick % task.interval === 0) {
                 console.log(`Running: ${task.name}`);
                 self.taskArray[task.name].run();
