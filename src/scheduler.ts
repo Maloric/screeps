@@ -21,16 +21,16 @@ export class Scheduler {
     }
 
     schedule(task: Task): void {
-        console.log(`scheduling ${task.name} every ${task.interval} ticks`);
+        // console.log(`scheduling ${task.name} every ${task.interval} ticks`);
         Memory['scheduledTasks'][task.name] = {
             name: task.name,
             interval: task.interval
-        }
+        };
         this.taskArray[task.name] = task;
     }
 
     unschedule(key: string): void {
-        delete Memory['scheduledTasks'][key]
+        delete Memory['scheduledTasks'][key];
     }
 
 };

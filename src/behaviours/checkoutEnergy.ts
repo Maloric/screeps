@@ -11,8 +11,8 @@ export function CheckoutEnergy(creep: Creep): void {
             switch (structure.structureType) {
                 case STRUCTURE_EXTENSION:
                 case STRUCTURE_SPAWN:
-                case STRUCTURE_CONTAINER:
                     return structure.energy > 0;
+                case STRUCTURE_CONTAINER:
                 case STRUCTURE_STORAGE:
                     return structure.store.energy > 0;
                 default:

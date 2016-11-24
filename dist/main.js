@@ -331,9 +331,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    case STRUCTURE_TOWER:
 	                    case STRUCTURE_EXTENSION:
 	                    case STRUCTURE_SPAWN:
-	                    case STRUCTURE_CONTAINER:
 	                    case STRUCTURE_STORAGE:
 	                        return structure.energy < structure.energyCapacity;
+	                    case STRUCTURE_CONTAINER:
 	                    case STRUCTURE_STORAGE:
 	                        let s = structure;
 	                        return s.store.energy < s.storeCapacity;
@@ -356,7 +356,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            else {
 	                let secondaryTargets = _.filter(targets, (s) => {
 	                    return s.structureType === STRUCTURE_STORAGE
-	                        && s.store.energy < 500;
+	                        || s.structureType === STRUCTURE_TOWER;
 	                });
 	                let primaryTargets = _.difference(targets, secondaryTargets);
 	                let closest = creep.pos.findClosestByPath(primaryTargets);
@@ -490,8 +490,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            switch (structure.structureType) {
 	                case STRUCTURE_EXTENSION:
 	                case STRUCTURE_SPAWN:
-	                case STRUCTURE_CONTAINER:
 	                    return structure.energy > 0;
+	                case STRUCTURE_CONTAINER:
 	                case STRUCTURE_STORAGE:
 	                    return structure.store.energy > 0;
 	                default:
@@ -952,6 +952,27 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        max: 6,
 	        tiers: [
 	            {
+	                cost: 900,
+	                capabilities: [
+	                    CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+	                    MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+	                ]
+	            },
+	            {
+	                cost: 750,
+	                capabilities: [
+	                    CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+	                    MOVE, MOVE, MOVE, MOVE, MOVE
+	                ]
+	            },
+	            {
+	                cost: 600,
+	                capabilities: [
+	                    CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+	                    MOVE, MOVE, MOVE, MOVE
+	                ]
+	            },
+	            {
 	                cost: 450,
 	                capabilities: [
 	                    CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
@@ -1120,7 +1141,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        });
 	    }
 	    schedule(task) {
-	        console.log(`scheduling ${task.name} every ${task.interval} ticks`);
 	        Memory['scheduledTasks'][task.name] = {
 	            name: task.name,
 	            interval: task.interval

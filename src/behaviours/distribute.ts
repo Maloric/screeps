@@ -29,9 +29,9 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                     case STRUCTURE_TOWER:
                     case STRUCTURE_EXTENSION:
                     case STRUCTURE_SPAWN:
-                    case STRUCTURE_CONTAINER:
                     case STRUCTURE_STORAGE:
                         return structure.energy < structure.energyCapacity;
+                    case STRUCTURE_CONTAINER:
                     case STRUCTURE_STORAGE:
                         let s = <StructureStorage>structure;
                         return s.store.energy < s.storeCapacity;
@@ -53,10 +53,9 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
             if (!!tower) {
                 creep.memory.target = (<StructureTower>tower).id;
             } else {
-                // Only fill storage above 500 if there are no other valid targets
                 let secondaryTargets = _.filter(targets, (s: any) => {
                     return s.structureType === STRUCTURE_STORAGE
-                        && s.store.energy < 500;
+                        || s.structureType === STRUCTURE_TOWER;
                 });
                 let primaryTargets = _.difference(targets, secondaryTargets);
                 let closest = creep.pos.findClosestByPath(primaryTargets);

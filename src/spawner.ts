@@ -39,6 +39,27 @@ export class Spawner {
             max: 6,
             tiers: [
                 {
+                    cost: 900,
+                    capabilities: [
+                        CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+                    ]
+                },
+                {
+                    cost: 750,
+                    capabilities: [
+                        CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                        MOVE, MOVE, MOVE, MOVE, MOVE
+                    ]
+                },
+                {
+                    cost: 600,
+                    capabilities: [
+                        CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                        MOVE, MOVE, MOVE, MOVE
+                    ]
+                },
+                {
                     cost: 450,
                     capabilities: [
                         CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
