@@ -48,9 +48,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	const index_1 = __webpack_require__(1);
 	const spawner_1 = __webpack_require__(19);
 	const behaviours_1 = __webpack_require__(4);
-	const scheduler_1 = __webpack_require__(20);
-	const tasks_1 = __webpack_require__(21);
-	const towers_1 = __webpack_require__(24);
+	const scheduler_1 = __webpack_require__(21);
+	const tasks_1 = __webpack_require__(22);
+	const towers_1 = __webpack_require__(25);
 	let scheduler = new scheduler_1.Scheduler();
 	scheduler.schedule(new tasks_1.RoadBuilder());
 	scheduler.schedule(new tasks_1.CacheCleaner());
@@ -844,9 +844,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 19 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const cacheHelper_1 = __webpack_require__(9);
+	const blueprints_1 = __webpack_require__(20);
 	class Spawner {
 	    static cleanup() {
 	        for (let name in Memory.creeps) {
@@ -868,7 +870,20 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    static autoSpawn() {
-	        let blueprints = this.blueprints;
+	        let spawn = Game.spawns['Spawn1'];
+	        let blueprints = blueprints_1.Blueprints;
+	        let cacheKey = `${spawn.room.name}_constructionSites`;
+	        let constructionSites = cacheHelper_1.Cache.get(cacheKey, () => {
+	            return spawn.room.find(FIND_CONSTRUCTION_SITES);
+	        });
+	        if (!constructionSites) {
+	            blueprints[2].max = 1;
+	            let reassigned = _.take(Memory['roster']['builder'], Memory['roster']['builder'].length - 1);
+	            for (var i = 0; i < reassigned.length; i++) {
+	                let creepName = reassigned[i];
+	                Game.creeps[creepName].memory['role'] = 'upgrader';
+	            }
+	        }
 	        if ((!Memory['roster']['harvester']
 	            || Memory['roster']['harvester'].length === 0)
 	            && Game.spawns['Spawn1'].canCreateCreep(blueprints[0].tiers[2].capabilities) !== OK) {
@@ -953,7 +968,15 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        return false;
 	    }
 	}
-	Spawner.blueprints = [
+	exports.Spawner = Spawner;
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	"use strict";
+	exports.Blueprints = [
 	    {
 	        name: 'harvester',
 	        min: 1,
@@ -1156,11 +1179,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        ]
 	    }
 	];
-	exports.Spawner = Spawner;
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1197,18 +1219,18 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var roadBuilder_1 = __webpack_require__(22);
+	var roadBuilder_1 = __webpack_require__(23);
 	exports.RoadBuilder = roadBuilder_1.RoadBuilder;
-	var cacheCleaner_1 = __webpack_require__(23);
+	var cacheCleaner_1 = __webpack_require__(24);
 	exports.CacheCleaner = cacheCleaner_1.CacheCleaner;
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1246,7 +1268,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1263,7 +1285,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	"use strict";
