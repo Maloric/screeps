@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 import { Cache } from '../cacheHelper';
 import { GetPositionByDirection } from '../util';
 export function Distribute(creep: Creep, includeTower: boolean = true) {
@@ -79,7 +80,7 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                 delete creep.memory.target;
                 break;
             case ERR_NOT_IN_RANGE:
-                let res = creep.moveTo(t);
+                let res = MoveTo(creep, t);
                 if (res === ERR_NO_PATH) {
                     daisyChain(creep);
                 }

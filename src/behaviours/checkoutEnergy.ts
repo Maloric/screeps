@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 export function CheckoutEnergy(creep: Creep): void {
     if (!Memory['roster']['harvester'] || Memory['roster']['harvester'].length < 2) {
         creep.memory.energyFreeze = true;
@@ -39,7 +40,7 @@ export function CheckoutEnergy(creep: Creep): void {
             }
 
             if (res === ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                MoveTo(creep, target);
             }
         }
     }

@@ -47,7 +47,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	const index_1 = __webpack_require__(1);
 	const spawner_1 = __webpack_require__(19);
-	const behaviours_1 = __webpack_require__(3);
+	const behaviours_1 = __webpack_require__(4);
 	const scheduler_1 = __webpack_require__(20);
 	const tasks_1 = __webpack_require__(21);
 	const towers_1 = __webpack_require__(24);
@@ -128,7 +128,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const behaviours_1 = __webpack_require__(3);
+	const util_1 = __webpack_require__(3);
+	const behaviours_1 = __webpack_require__(4);
 	class Archer {
 	    static run(creep) {
 	        if (!creep.memory.target) {
@@ -152,7 +153,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            switch (res) {
 	                case ERR_NOT_IN_RANGE:
 	                    console.log('Not in range');
-	                    creep.moveTo(target);
+	                    util_1.MoveTo(creep, target);
 	                    break;
 	                case ERR_INVALID_TARGET:
 	                    console.log('Invalid Target');
@@ -167,16 +168,88 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function GetPositionByDirection(pos, direction) {
+	    let newPos = pos;
+	    switch (direction) {
+	        case (TOP_LEFT):
+	            newPos.y--;
+	            newPos.x--;
+	            break;
+	        case (TOP):
+	            newPos.y--;
+	            break;
+	        case (TOP_RIGHT):
+	            newPos.y--;
+	            newPos.x++;
+	            break;
+	        case (LEFT):
+	            newPos.x--;
+	            break;
+	        case (RIGHT):
+	            newPos.x++;
+	            break;
+	        case (BOTTOM_LEFT):
+	            newPos.y++;
+	            newPos.x--;
+	            break;
+	        case (BOTTOM):
+	            newPos.y++;
+	            break;
+	        case (BOTTOM_RIGHT):
+	            newPos.y++;
+	            newPos.x++;
+	            break;
+	    }
+	    return newPos;
+	}
+	exports.GetPositionByDirection = GetPositionByDirection;
+	function MoveTo(creep, target) {
+	    if (!Memory['routeCache']) {
+	        Memory['routeCache'] = {};
+	    }
+	    let start = creep.pos;
+	    let end = target;
+	    if (!!target.pos) {
+	        end = target.pos;
+	    }
+	    let startKey = `${start.roomName}_${start.x}_${start.y}`;
+	    let endKey = `${end.roomName}_${end.x}_${end.y}`;
+	    let res;
+	    if (startKey === creep.memory.lastPos) {
+	        console.log(`${creep.name} may be stuck.  Recalculating path...`);
+	        res = creep.moveTo(target);
+	    }
+	    else {
+	        let cacheKey = `${startKey}:${endKey}`;
+	        if (!Memory['routeCache'][cacheKey]) {
+	            let route = Game.rooms[start.roomName].findPath(start, end, {
+	                ignoreCreeps: true
+	            });
+	            let firstStep = route[0];
+	            Memory['routeCache'][cacheKey] = firstStep.direction;
+	        }
+	        res = creep.move(Memory['routeCache'][cacheKey]);
+	    }
+	    return res;
+	}
+	exports.MoveTo = MoveTo;
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var harvest_1 = __webpack_require__(4);
+	var harvest_1 = __webpack_require__(5);
 	exports.Harvest = harvest_1.Harvest;
-	var recover_1 = __webpack_require__(5);
+	var recover_1 = __webpack_require__(6);
 	exports.Recover = recover_1.Recover;
-	var recoverDropped_1 = __webpack_require__(6);
+	var recoverDropped_1 = __webpack_require__(7);
 	exports.RecoverDropped = recoverDropped_1.RecoverDropped;
-	var distribute_1 = __webpack_require__(7);
+	var distribute_1 = __webpack_require__(8);
 	exports.Distribute = distribute_1.Distribute;
 	var checkoutEnergy_1 = __webpack_require__(10);
 	exports.CheckoutEnergy = checkoutEnergy_1.CheckoutEnergy;
@@ -187,10 +260,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 4 */
-/***/ function(module, exports) {
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const util_1 = __webpack_require__(3);
 	function Harvest(creep) {
 	    if (!creep.memory.target) {
 	        let sourceIds = _.map(creep.room.find(FIND_SOURCES), (s) => s.id);
@@ -210,7 +284,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        let res = creep.harvest(target);
 	        switch (res) {
 	            case ERR_NOT_IN_RANGE:
-	                creep.moveTo(target);
+	                util_1.MoveTo(creep, target);
 	                break;
 	            case ERR_INVALID_TARGET:
 	                delete creep.memory.target;
@@ -222,11 +296,12 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const recoverDropped_1 = __webpack_require__(6);
+	const util_1 = __webpack_require__(3);
+	const recoverDropped_1 = __webpack_require__(7);
 	function Recover(creep) {
 	    let harvesters = Memory['roster']['harvester'];
 	    let needyHarvesters = _.filter(harvesters, (h) => Game.creeps[h].memory['distributors'].length === 0);
@@ -245,7 +320,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (!recoverDropped_1.RecoverDropped(creep)) {
 	            if (creep.pos.getRangeTo(h) > 1) {
-	                creep.moveTo(h);
+	                util_1.MoveTo(creep, h);
 	                return;
 	            }
 	        }
@@ -271,10 +346,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 6 */
-/***/ function(module, exports) {
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const util_1 = __webpack_require__(3);
 	function RecoverDropped(creep) {
 	    let droppedEnergy = _.sortBy(creep.room.find(FIND_DROPPED_ENERGY, {
 	        filter: (x) => {
@@ -288,7 +364,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    }
 	    if (droppedEnergy.length) {
 	        if (creep.pickup(droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
-	            creep.moveTo(droppedEnergy[0]);
+	            util_1.MoveTo(creep, droppedEnergy[0]);
 	        }
 	        return true;
 	    }
@@ -298,17 +374,18 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const cacheHelper_1 = __webpack_require__(8);
-	const util_1 = __webpack_require__(9);
+	const util_1 = __webpack_require__(3);
+	const cacheHelper_1 = __webpack_require__(9);
+	const util_2 = __webpack_require__(3);
 	function Distribute(creep, includeTower = true) {
 	    let daisyChain = (creep) => {
 	        if (creep.memory._move) {
 	            let direction = parseInt(creep.memory._move.path.substr(0, 1));
-	            let dest = util_1.GetPositionByDirection(creep.pos, direction);
+	            let dest = util_2.GetPositionByDirection(creep.pos, direction);
 	            let adjacentCreeps = dest.lookFor(LOOK_CREEPS);
 	            if (adjacentCreeps && adjacentCreeps.length > 0) {
 	                let adjacentCreep = adjacentCreeps[0];
@@ -380,7 +457,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                delete creep.memory.target;
 	                break;
 	            case ERR_NOT_IN_RANGE:
-	                let res = creep.moveTo(t);
+	                let res = util_1.MoveTo(creep, t);
 	                if (res === ERR_NO_PATH) {
 	                    daisyChain(creep);
 	                }
@@ -396,7 +473,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -431,52 +508,11 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	"use strict";
-	function GetPositionByDirection(pos, direction) {
-	    let newPos = pos;
-	    switch (direction) {
-	        case (TOP_LEFT):
-	            newPos.y--;
-	            newPos.x--;
-	            break;
-	        case (TOP):
-	            newPos.y--;
-	            break;
-	        case (TOP_RIGHT):
-	            newPos.y--;
-	            newPos.x++;
-	            break;
-	        case (LEFT):
-	            newPos.x--;
-	            break;
-	        case (RIGHT):
-	            newPos.x++;
-	            break;
-	        case (BOTTOM_LEFT):
-	            newPos.y++;
-	            newPos.x--;
-	            break;
-	        case (BOTTOM):
-	            newPos.y++;
-	            break;
-	        case (BOTTOM_RIGHT):
-	            newPos.y++;
-	            newPos.x++;
-	            break;
-	    }
-	    return newPos;
-	}
-	exports.GetPositionByDirection = GetPositionByDirection;
-
-
-/***/ },
 /* 10 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const util_1 = __webpack_require__(3);
 	function CheckoutEnergy(creep) {
 	    if (!Memory['roster']['harvester'] || Memory['roster']['harvester'].length < 2) {
 	        creep.memory.energyFreeze = true;
@@ -517,7 +553,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	            }
 	            if (res === ERR_NOT_IN_RANGE) {
-	                creep.moveTo(target);
+	                util_1.MoveTo(creep, target);
 	            }
 	        }
 	    }
@@ -527,12 +563,13 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 11 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	const util_1 = __webpack_require__(3);
 	function Idle(creep) {
 	    if (!creep.pos.inRangeTo(Game.flags['camp'].pos, 3)) {
-	        creep.moveTo(Game.flags['camp']);
+	        util_1.MoveTo(creep, Game.flags['camp']);
 	    }
 	}
 	exports.Idle = Idle;
@@ -573,8 +610,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(3);
-	const cacheHelper_1 = __webpack_require__(8);
+	const util_1 = __webpack_require__(3);
+	const index_1 = __webpack_require__(4);
+	const cacheHelper_1 = __webpack_require__(9);
 	class Builder {
 	    static run(creep) {
 	        if (creep.carry.energy === 0) {
@@ -633,7 +671,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    static resolveBuild(creep, res, target) {
 	        switch (res) {
 	            case ERR_NOT_IN_RANGE:
-	                creep.moveTo(target);
+	                util_1.MoveTo(creep, target);
 	                break;
 	            case ERR_INVALID_TARGET:
 	                if (target && target.hits && target.hits < target.hitsMax) {
@@ -649,7 +687,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    static resolveRepair(creep, res, target) {
 	        switch (res) {
 	            case ERR_NOT_IN_RANGE:
-	                creep.moveTo(target);
+	                util_1.MoveTo(creep, target);
 	                break;
 	            case ERR_INVALID_TARGET:
 	                console.log('Invalid repair target.  Clearing target.');
@@ -666,7 +704,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const behaviours_1 = __webpack_require__(3);
+	const behaviours_1 = __webpack_require__(4);
 	class Harvester {
 	    static run(creep) {
 	        behaviours_1.Harvest(creep);
@@ -680,7 +718,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(3);
+	const util_1 = __webpack_require__(3);
+	const index_1 = __webpack_require__(4);
 	class Upgrader {
 	    static run(creep) {
 	        if (creep.memory.upgrading && creep.carry.energy === 0) {
@@ -693,7 +732,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (creep.memory.upgrading && creep.room.controller) {
 	            if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) {
-	                creep.moveTo(creep.room.controller);
+	                util_1.MoveTo(creep, creep.room.controller);
 	            }
 	        }
 	        else {
@@ -709,7 +748,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(3);
+	const index_1 = __webpack_require__(4);
 	class Distributor {
 	    static run(creep) {
 	        if (creep.carry.energy < creep.carryCapacity) {
@@ -728,7 +767,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(3);
+	const util_1 = __webpack_require__(3);
+	const index_1 = __webpack_require__(4);
 	class Serf {
 	    static run(creep) {
 	        if (creep.carry.energy < creep.carryCapacity) {
@@ -744,7 +784,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                let res = creep.harvest(target);
 	                switch (res) {
 	                    case ERR_NOT_IN_RANGE:
-	                        creep.moveTo(target);
+	                        util_1.MoveTo(creep, target);
 	                        break;
 	                    case ERR_INVALID_TARGET:
 	                        delete creep.memory.target;
@@ -765,7 +805,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const behaviours_1 = __webpack_require__(3);
+	const util_1 = __webpack_require__(3);
+	const behaviours_1 = __webpack_require__(4);
 	class Healer {
 	    static run(creep) {
 	        if (!creep.memory.target) {
@@ -787,7 +828,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        if (creep.memory.target) {
 	            let target = Game.getObjectById(creep.memory.target);
 	            if (creep.heal(target) === ERR_NOT_IN_RANGE) {
-	                creep.moveTo(target);
+	                util_1.MoveTo(creep, target);
 	            }
 	            else if (target.hits < target.hitsMax) {
 	                delete creep.memory.target;

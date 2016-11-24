@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 import { Idle } from '../behaviours';
 
 export class Healer {
@@ -23,7 +24,7 @@ export class Healer {
         if (creep.memory.target) {
             let target = <Creep>Game.getObjectById(creep.memory.target);
             if (creep.heal(target) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                MoveTo(creep, target);
             } else if (target.hits < target.hitsMax) {
                 delete creep.memory.target;
             }

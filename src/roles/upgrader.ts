@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 import { CheckoutEnergy } from '../behaviours/index';
 export class Upgrader {
     static run(creep: Creep) {
@@ -11,7 +12,7 @@ export class Upgrader {
 
         if (creep.memory.upgrading && creep.room.controller) {
             if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller);
+                MoveTo(creep, creep.room.controller);
             }
         } else {
             CheckoutEnergy(creep);

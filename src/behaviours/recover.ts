@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 import { RecoverDropped } from './recoverDropped';
 export function Recover(creep: Creep) {
     let harvesters: string[] = Memory['roster']['harvester'];
@@ -21,7 +22,7 @@ export function Recover(creep: Creep) {
 
         if (!RecoverDropped(creep)) {
             if (creep.pos.getRangeTo(h) > 1) {
-                creep.moveTo(h);
+                MoveTo(creep, h);
                 return;
             }
         }

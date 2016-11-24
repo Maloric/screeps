@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 import { Idle } from '../behaviours';
 
 export class Archer {
@@ -24,7 +25,7 @@ export class Archer {
             switch (res) {
                 case ERR_NOT_IN_RANGE:
                     console.log('Not in range');
-                    creep.moveTo(target);
+                    MoveTo(creep, target);
                     break;
                 case ERR_INVALID_TARGET:
                     console.log('Invalid Target');

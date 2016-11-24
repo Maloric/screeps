@@ -34,3 +34,37 @@ export function GetPositionByDirection(pos: RoomPosition, direction: number): Ro
 
     return newPos;
 }
+
+
+export function MoveTo(creep: Creep, target: any): number {
+    if (!Memory['routeCache']) {
+        Memory['routeCache'] = {};
+    }
+    let start = creep.pos;
+    let end = target;
+
+    if (!!target.pos) {
+        end = target.pos;
+    }
+
+    let startKey = `${start.roomName}_${start.x}_${start.y}`;
+    let endKey = `${end.roomName}_${end.x}_${end.y}`;
+
+    let res: number;
+    if (startKey === creep.memory.lastPos) {
+        console.log(`${creep.name} may be stuck.  Recalculating path...`);
+        res = creep.moveTo(target);
+    } else {
+        let cacheKey = `${startKey}:${endKey}`;
+        if (!Memory['routeCache'][cacheKey]) {
+            let route = Game.rooms[start.roomName].findPath(start, end, {
+                ignoreCreeps: true
+            });
+            let firstStep = route[0];
+            Memory['routeCache'][cacheKey] = firstStep.direction;
+        }
+
+        res = creep.move(Memory['routeCache'][cacheKey]);
+    }
+    return res;
+}

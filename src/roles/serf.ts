@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 import { Distribute, RecoverDropped } from '../behaviours/index';
 export class Serf {
     static run(creep: Creep) {
@@ -15,7 +16,7 @@ export class Serf {
                 let res = creep.harvest(target);
                 switch (res) {
                     case ERR_NOT_IN_RANGE:
-                        creep.moveTo(target);
+                        MoveTo(creep, target);
                         break;
                     case ERR_INVALID_TARGET:
                         delete creep.memory.target;

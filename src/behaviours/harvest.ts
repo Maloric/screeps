@@ -1,3 +1,5 @@
+import { MoveTo } from '../util';
+
 export function Harvest(creep: Creep): void {
     if (!creep.memory.target) {
         let sourceIds: string[] = _.map(creep.room.find(FIND_SOURCES), (s: Source) => s.id);
@@ -23,7 +25,7 @@ export function Harvest(creep: Creep): void {
         let res = creep.harvest(target);
         switch (res) {
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(target);
+                MoveTo(creep, target);
                 break;
             case ERR_INVALID_TARGET:
                 delete creep.memory.target;

@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 import { CheckoutEnergy } from '../behaviours/index';
 import { Cache } from '../cacheHelper';
 
@@ -62,7 +63,7 @@ export class Builder {
     static resolveBuild(creep: Creep, res: number, target: any) {
         switch (res) {
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(target);
+                MoveTo(creep, target);
                 break;
             case ERR_INVALID_TARGET:
                 if (target && target.hits && target.hits < target.hitsMax) {
@@ -80,7 +81,7 @@ export class Builder {
     static resolveRepair(creep: Creep, res: number, target: any) {
         switch (res) {
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(target);
+                MoveTo(creep, target);
                 break;
             case ERR_INVALID_TARGET:
                 console.log('Invalid repair target.  Clearing target.');

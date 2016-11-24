@@ -1,3 +1,4 @@
+import { MoveTo } from '../util';
 export function RecoverDropped(creep: Creep): boolean {
     let droppedEnergy = _.sortBy(creep.room.find(FIND_DROPPED_ENERGY, {
         filter: (x: any) => {
@@ -13,7 +14,7 @@ export function RecoverDropped(creep: Creep): boolean {
 
     if (droppedEnergy.length) {
         if (creep.pickup(<Resource>droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(<Resource>droppedEnergy[0]);
+            MoveTo(creep, <Resource>droppedEnergy[0]);
         }
         return true;
     }
