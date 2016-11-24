@@ -30,8 +30,9 @@ export class Builder {
                 } else {
                     target = creep.pos.findClosestByPath(secondaryTargets);
                 }
-
-                creep.memory.target = target.id;
+                if (!!target) {
+                    creep.memory.target = target.id;
+                }
             } else {
                 let cacheKey = `${creep.room.name}_repairTargets`;
                 let repairTargets = <Structure[]>Cache.get(cacheKey, () => creep.room.find(FIND_STRUCTURES, {

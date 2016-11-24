@@ -600,7 +600,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                else {
 	                    target = creep.pos.findClosestByPath(secondaryTargets);
 	                }
-	                creep.memory.target = target.id;
+	                if (!!target) {
+	                    creep.memory.target = target.id;
+	                }
 	            }
 	            else {
 	                let cacheKey = `${creep.room.name}_repairTargets`;
