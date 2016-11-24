@@ -876,7 +876,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        let constructionSites = cacheHelper_1.Cache.get(cacheKey, () => {
 	            return spawn.room.find(FIND_CONSTRUCTION_SITES);
 	        });
-	        if (!constructionSites) {
+	        if (!constructionSites && Memory['roster']['builder']) {
 	            blueprints[2].max = 1;
 	            let reassigned = _.take(Memory['roster']['builder'], Memory['roster']['builder'].length - 1);
 	            for (var i = 0; i < reassigned.length; i++) {

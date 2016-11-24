@@ -28,7 +28,7 @@ export class Spawner {
         let constructionSites = Cache.get(cacheKey, () => {
             return spawn.room.find(FIND_CONSTRUCTION_SITES);
         });
-        if (!constructionSites) {
+        if (!constructionSites && Memory['roster']['builder']) {
             blueprints[2].max = 1; // TODO: this shouldn't have a hard coded index
             let reassigned = _.take(Memory['roster']['builder'], Memory['roster']['builder'].length - 1);
             for (var i = 0; i < reassigned.length; i++) {
