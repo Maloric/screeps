@@ -305,7 +305,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	const cacheHelper_1 = __webpack_require__(8);
 	const util_1 = __webpack_require__(9);
 	function Distribute(creep, includeTower = true) {
-	    let tryMove = (creep) => {
+	    let tryMove = (creep, target) => {
 	        if (creep.memory._move) {
 	            let direction = parseInt(creep.memory._move.path.substr(0, 1));
 	            let dest = util_1.GetPositionByDirection(creep.pos, direction);
@@ -322,6 +322,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	        }
+	        creep.moveTo(target);
 	    };
 	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
 	        let cacheKey = `${creep.room.name}_distributeTargets`;
@@ -380,7 +381,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                delete creep.memory.target;
 	                break;
 	            case ERR_NOT_IN_RANGE:
-	                tryMove(creep);
+	                tryMove(creep, t);
 	                break;
 	            case ERR_INVALID_TARGET:
 	                delete creep.memory.target;
