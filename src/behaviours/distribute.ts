@@ -22,7 +22,7 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
         }
     };
 
-    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
+    if (!creep.memory.target && creep.carry.energy > 0) {
         let cacheKey = `${creep.room.name}_distributeTargets`;
         let targets = Cache.get(cacheKey, () => <Structure[]>creep.room.find(FIND_STRUCTURES, {
             filter: (structure: any) => {

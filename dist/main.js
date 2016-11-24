@@ -400,7 +400,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    };
-	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
+	    if (!creep.memory.target && creep.carry.energy > 0) {
 	        let cacheKey = `${creep.room.name}_distributeTargets`;
 	        let targets = cacheHelper_1.Cache.get(cacheKey, () => creep.room.find(FIND_STRUCTURES, {
 	            filter: (structure) => {
