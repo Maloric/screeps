@@ -92,7 +92,7 @@ export class Spawner {
             ]
         }, {
             name: 'upgrader',
-            min: 1,
+            min: 0,
             max: 4,
             tiers: [
                 {
@@ -268,9 +268,9 @@ export class Spawner {
                                 )
                             )
                         ) {
-                            console.log(`Need ${blueprint.tiers[i].cost} energy to spawn ${blueprint.name}
-                                but ${spawn.name} has ${spawn.room.energyAvailable}/${spawn.room.energyCapacityAvailable}.
-                                Waiting for more energy.`);
+                            console.log(`Need ${blueprint.tiers[i].cost} energy to spawn ${blueprint.name}`
+                                + ` but ${spawn.name} has ${spawn.room.energyAvailable}/${spawn.room.energyCapacityAvailable}.`
+                                + ` Waiting for more energy.`);
                             break;
                         }
                     };

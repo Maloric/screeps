@@ -305,7 +305,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	const cacheHelper_1 = __webpack_require__(8);
 	const util_1 = __webpack_require__(9);
 	function Distribute(creep, includeTower = true) {
-	    let tryMove = (creep, target) => {
+	    let daisyChain = (creep) => {
 	        if (creep.memory._move) {
 	            let direction = parseInt(creep.memory._move.path.substr(0, 1));
 	            let dest = util_1.GetPositionByDirection(creep.pos, direction);
@@ -322,7 +322,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	        }
-	        creep.moveTo(target);
 	    };
 	    if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
 	        let cacheKey = `${creep.room.name}_distributeTargets`;
@@ -381,8 +380,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                delete creep.memory.target;
 	                break;
 	            case ERR_NOT_IN_RANGE:
-	                tryMove(creep, t);
+	                creep.moveTo(t);
+	                daisyChain(creep);
 	                break;
+	            case ERR_FULL:
 	            case ERR_INVALID_TARGET:
 	                delete creep.memory.target;
 	                break;
@@ -875,9 +876,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                                        Memory['roster']['harvester'].length > 0 &&
 	                                        Memory['roster']['distributor'] &&
 	                                        Memory['roster']['distributor'].length > 0))) {
-	                            console.log(`Need ${blueprint.tiers[i].cost} energy to spawn ${blueprint.name}
-	                                but ${spawn.name} has ${spawn.room.energyAvailable}/${spawn.room.energyCapacityAvailable}.
-	                                Waiting for more energy.`);
+	                            console.log(`Need ${blueprint.tiers[i].cost} energy to spawn ${blueprint.name}`
+	                                + ` but ${spawn.name} has ${spawn.room.energyAvailable}/${spawn.room.energyCapacityAvailable}.`
+	                                + ` Waiting for more energy.`);
 	                            break;
 	                        }
 	                    }
@@ -1000,7 +1001,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        ]
 	    }, {
 	        name: 'upgrader',
-	        min: 1,
+	        min: 0,
 	        max: 4,
 	        tiers: [
 	            {

@@ -2,7 +2,7 @@ import { Cache } from '../cacheHelper';
 import { GetPositionByDirection } from '../util';
 export function Distribute(creep: Creep, includeTower: boolean = true) {
 
-    let tryMove = (creep: Creep, target: Structure) => {
+    let daisyChain = (creep: Creep) => {
         if (creep.memory._move) {
             let direction = parseInt(creep.memory._move.path.substr(0, 1));
             let dest = GetPositionByDirection(creep.pos, direction);
@@ -19,7 +19,6 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                 }
             }
         }
-        creep.moveTo(target);
     };
 
     if (!creep.memory.target && creep.carry.energy === creep.carryCapacity) {
@@ -81,8 +80,10 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                 delete creep.memory.target;
                 break;
             case ERR_NOT_IN_RANGE:
-                tryMove(creep, t);
+                creep.moveTo(t);
+                daisyChain(creep);
                 break;
+            case ERR_FULL:
             case ERR_INVALID_TARGET:
                 delete creep.memory.target;
                 break;
