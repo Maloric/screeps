@@ -80,8 +80,10 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                 delete creep.memory.target;
                 break;
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(t);
-                daisyChain(creep);
+                let res = creep.moveTo(t);
+                if (res === ERR_NO_PATH) {
+                    daisyChain(creep);
+                }
                 break;
             case ERR_FULL:
             case ERR_INVALID_TARGET:
