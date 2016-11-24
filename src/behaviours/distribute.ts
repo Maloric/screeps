@@ -19,7 +19,7 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                 }
             }
         }));
-        if (targets.length > 0) {
+        if (targets && targets.length > 0) {
             let tower: any;
             if (!!includeTower) {
                 // Tower should have minimum 850 energy first

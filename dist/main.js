@@ -323,7 +323,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	        }));
-	        if (targets.length > 0) {
+	        if (targets && targets.length > 0) {
 	            let tower;
 	            if (!!includeTower) {
 	                tower = _.find(targets, (s) => {
@@ -522,7 +522,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            let buildTargets = cacheHelper_1.Cache.get(cacheKey, () => {
 	                return creep.room.find(FIND_CONSTRUCTION_SITES);
 	            });
-	            if (buildTargets.length > 0) {
+	            if (buildTargets && buildTargets.length > 0) {
 	                let secondaryTargets = _.filter(buildTargets, (tgt) => {
 	                    return tgt.structureType !== STRUCTURE_EXTENSION;
 	                });
@@ -541,7 +541,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                let repairTargets = cacheHelper_1.Cache.get(cacheKey, () => creep.room.find(FIND_STRUCTURES, {
 	                    filter: (object) => object.hits < object.hitsMax
 	                }));
-	                if (repairTargets.length > 0) {
+	                if (repairTargets && repairTargets.length > 0) {
 	                    let closestByPath = creep.pos.findClosestByPath(repairTargets);
 	                    if (!!closestByPath) {
 	                        creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;

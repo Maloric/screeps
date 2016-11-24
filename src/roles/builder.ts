@@ -17,7 +17,7 @@ export class Builder {
                 return creep.room.find(FIND_CONSTRUCTION_SITES);
             });
 
-            if (buildTargets.length > 0) {
+            if (buildTargets && buildTargets.length > 0) {
                 let secondaryTargets = _.filter(buildTargets, (tgt: ConstructionSite) => {
                     return tgt.structureType !== STRUCTURE_EXTENSION;
                 });
@@ -38,7 +38,7 @@ export class Builder {
                     filter: (object: any) => object.hits < object.hitsMax
                 }));
 
-                if (repairTargets.length > 0) {
+                if (repairTargets && repairTargets.length > 0) {
                     // repairTargets.sort((a: any, b: any) => a.hits - b.hits);
                     let closestByPath = creep.pos.findClosestByPath(repairTargets);
                     if (!!closestByPath) {
