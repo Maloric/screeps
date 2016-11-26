@@ -218,9 +218,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    let startKey = `${start.roomName}_${start.x}_${start.y}`;
 	    let endKey = `${end.roomName}_${end.x}_${end.y}`;
 	    let res;
-	    if (startKey === creep.memory.lastPos) {
+	    if (creep.memory.ticksWithoutMoving > 0) {
 	        console.log(`${creep.name} may be stuck.  Recalculating path...`);
-	        res = creep.moveTo(target);
+	        res = creep.move(Math.floor(Math.random() * 8));
 	    }
 	    else {
 	        let cacheKey = `${startKey}:${endKey}`;
@@ -249,7 +249,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	exports.Recover = recover_1.Recover;
 	var recoverDropped_1 = __webpack_require__(7);
 	exports.RecoverDropped = recoverDropped_1.RecoverDropped;
-	var distribute_1 = __webpack_require__(8);
+	var distribute_1 = __webpack_require__(9);
 	exports.Distribute = distribute_1.Distribute;
 	var checkoutEnergy_1 = __webpack_require__(10);
 	exports.CheckoutEnergy = checkoutEnergy_1.CheckoutEnergy;
@@ -351,20 +351,25 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	const util_1 = __webpack_require__(3);
+	const cacheHelper_1 = __webpack_require__(8);
 	function RecoverDropped(creep) {
-	    let droppedEnergy = _.sortBy(creep.room.find(FIND_DROPPED_ENERGY, {
-	        filter: (x) => {
-	            return x.energy > 1000;
-	        }
-	    }), (x) => {
-	        return 0 - x.energy;
+	    let cacheKey = `${creep.room.name}_droppedEnergy`;
+	    let droppedEnergy = cacheHelper_1.Cache.get(cacheKey, () => {
+	        return creep.pos.findClosestByPath(FIND_DROPPED_ENERGY, {
+	            filter: (x) => {
+	                return x.energy > 1000;
+	            }
+	        });
 	    });
-	    if (droppedEnergy.length === 0) {
-	        droppedEnergy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 10);
+	    if (!droppedEnergy) {
+	        let arrDropped = creep.pos.findInRange(FIND_DROPPED_ENERGY, 10);
+	        if (arrDropped.length > 0) {
+	            droppedEnergy = arrDropped[0];
+	        }
 	    }
-	    if (droppedEnergy.length) {
-	        if (creep.pickup(droppedEnergy[0]) === ERR_NOT_IN_RANGE) {
-	            util_1.MoveTo(creep, droppedEnergy[0]);
+	    if (!!droppedEnergy) {
+	        if (creep.pickup(droppedEnergy) === ERR_NOT_IN_RANGE) {
+	            util_1.MoveTo(creep, droppedEnergy);
 	        }
 	        return true;
 	    }
@@ -375,11 +380,46 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+	class Cache {
+	    static get(cacheKey, dataFn = null) {
+	        let res = Memory['cache'][cacheKey];
+	        if (!res) {
+	            if (dataFn !== null) {
+	                res = dataFn();
+	                if (res && res.id) {
+	                    res = res.id;
+	                }
+	                else if (res && res.map && res[0] && res[0].id) {
+	                    res = res.map((x) => x.id);
+	                }
+	                Memory['cache'][cacheKey] = res;
+	            }
+	            else {
+	                console.log(`Error caching ${cacheKey}.  No dataFn defined.`);
+	            }
+	        }
+	        if (res && res.map) {
+	            res = res.map((x) => Game.getObjectById(x));
+	        }
+	        else {
+	            res = Game.getObjectById(res);
+	        }
+	        return res;
+	    }
+	}
+	exports.Cache = Cache;
+
+
+/***/ },
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	const util_1 = __webpack_require__(3);
-	const cacheHelper_1 = __webpack_require__(9);
+	const cacheHelper_1 = __webpack_require__(8);
 	const util_2 = __webpack_require__(3);
 	function Distribute(creep, includeTower = true) {
 	    let daisyChain = (creep) => {
@@ -473,41 +513,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	"use strict";
-	class Cache {
-	    static get(cacheKey, dataFn = null) {
-	        let res = Memory['cache'][cacheKey];
-	        if (!res) {
-	            if (dataFn !== null) {
-	                res = dataFn();
-	                if (res.id) {
-	                    res = res.id;
-	                }
-	                else if (res.length && res[0] && res[0].id) {
-	                    res = res.map((x) => x.id);
-	                }
-	                Memory['cache'][cacheKey] = res;
-	            }
-	            else {
-	                console.log(`Error caching ${cacheKey}.  No dataFn defined.`);
-	            }
-	        }
-	        if (res.length) {
-	            res = res.map((x) => Game.getObjectById(x));
-	        }
-	        else {
-	            res = Game.getObjectById(res);
-	        }
-	        return res;
-	    }
-	}
-	exports.Cache = Cache;
-
-
-/***/ },
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -584,9 +589,14 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	function ReportStep(creep) {
 	    let posKey = `${creep.pos.roomName}_${creep.pos.x}_${creep.pos.y}`;
 	    if (creep.memory.lastPos === posKey) {
+	        if (!creep.memory.ticksWithoutMoving) {
+	            creep.memory.ticksWithoutMoving = 0;
+	        }
+	        creep.memory.ticksWithoutMoving++;
 	        return;
 	    }
 	    creep.memory.lastPos = posKey;
+	    creep.memory.ticksWithoutMoving = 0;
 	    if (!Memory['paths']) {
 	        Memory['paths'] = {};
 	    }
@@ -612,7 +622,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	const util_1 = __webpack_require__(3);
 	const index_1 = __webpack_require__(4);
-	const cacheHelper_1 = __webpack_require__(9);
+	const cacheHelper_1 = __webpack_require__(8);
 	class Builder {
 	    static run(creep) {
 	        if (creep.carry.energy === 0) {
@@ -847,7 +857,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const cacheHelper_1 = __webpack_require__(9);
+	const cacheHelper_1 = __webpack_require__(8);
 	const blueprints_1 = __webpack_require__(20);
 	class Spawner {
 	    static cleanup() {

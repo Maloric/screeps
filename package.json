@@ -43,5 +43,8 @@
     "tslint": "3.14.0",
     "typescript": "^2.0.3",
     "typings": "^1.5.0"
+  },
+  "dependencies": {
+    "screeps-profiler": "^1.2.1"
   }
 }

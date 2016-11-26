@@ -51,9 +51,10 @@ export function MoveTo(creep: Creep, target: any): number {
     let endKey = `${end.roomName}_${end.x}_${end.y}`;
 
     let res: number;
-    if (startKey === creep.memory.lastPos) {
+    if (creep.memory.ticksWithoutMoving > 0) {
         console.log(`${creep.name} may be stuck.  Recalculating path...`);
-        res = creep.moveTo(target);
+        // res = creep.moveTo(target);
+        res = creep.move(Math.floor(Math.random() * 8));
     } else {
         let cacheKey = `${startKey}:${endKey}`;
         if (!Memory['routeCache'][cacheKey]) {

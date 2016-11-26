@@ -4,9 +4,9 @@ export class Cache {
         if (!res) {
             if (dataFn !== null) {
                 res = dataFn();
-                if (res.id) {
+                if (res && res.id) {
                     res = res.id;
-                } else if (res.length && res[0] && res[0].id) {
+                } else if (res && res.map && res[0] && res[0].id) {
                     res = res.map((x: any) => x.id);
                 }
 
@@ -16,7 +16,7 @@ export class Cache {
             }
         }
 
-        if (res.length) {
+        if (res && res.map) {
             res = res.map((x: any) => Game.getObjectById(x));
         } else {
             res = Game.getObjectById(res);

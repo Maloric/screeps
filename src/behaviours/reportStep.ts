@@ -2,10 +2,15 @@ export function ReportStep(creep: Creep) {
     let posKey = `${creep.pos.roomName}_${creep.pos.x}_${creep.pos.y}`;
 
     if (creep.memory.lastPos === posKey) {
+        if (!creep.memory.ticksWithoutMoving) {
+            creep.memory.ticksWithoutMoving = 0;
+        }
+        creep.memory.ticksWithoutMoving++;
         return;
     }
 
     creep.memory.lastPos = posKey;
+    creep.memory.ticksWithoutMoving = 0;
 
     if (!Memory['paths']) {
         Memory['paths'] = {};
