@@ -5,5 +5,10 @@ export class CacheCleaner implements Task {
 
     run(): void {
         Memory['cache'] = {};
+
+        // TODO: fix this
+        // Memory['routeCache'] = _.pickBy(Memory['routeCache'], (x) => {
+        //     return Game.time - x < 1000;
+        // });
     }
 }

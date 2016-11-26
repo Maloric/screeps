@@ -37,6 +37,17 @@ export function GetPositionByDirection(pos: RoomPosition, direction: number): Ro
 
 
 export function MoveTo(creep: Creep, target: any): number {
+    function CalculateRoute(cacheKey: string, start: RoomPosition, end: RoomPosition) {
+        let route = Game.rooms[start.roomName].findPath(start, end, {
+            ignoreCreeps: true
+        });
+        let firstStep = route[0];
+        Memory['routeCache'][cacheKey] = {
+            createdAt: Game.time,
+            direction: firstStep.direction
+        };
+    }
+
     if (!Memory['routeCache']) {
         Memory['routeCache'] = {};
     }
@@ -51,21 +62,33 @@ export function MoveTo(creep: Creep, target: any): number {
     let endKey = `${end.roomName}_${end.x}_${end.y}`;
 
     let res: number;
-    if (creep.memory.ticksWithoutMoving > 0) {
-        console.log(`${creep.name} may be stuck.  Recalculating path...`);
-        // res = creep.moveTo(target);
-        res = creep.move(Math.floor(Math.random() * 8));
-    } else {
-        let cacheKey = `${startKey}:${endKey}`;
-        if (!Memory['routeCache'][cacheKey]) {
-            let route = Game.rooms[start.roomName].findPath(start, end, {
-                ignoreCreeps: true
-            });
-            let firstStep = route[0];
-            Memory['routeCache'][cacheKey] = firstStep.direction;
-        }
 
-        res = creep.move(Memory['routeCache'][cacheKey]);
+    let cacheKey = `${startKey}:${endKey}`;
+    if (!Memory['routeCache'][cacheKey]) {
+        CalculateRoute(cacheKey, start, end);
     }
+
+    let direction = Memory['routeCache'][cacheKey].direction;
+
+    let nextPos = GetPositionByDirection(creep.pos, direction);
+    let blockers = _.merge(
+        nextPos.lookFor(LOOK_STRUCTURES),
+        nextPos.lookFor(LOOK_CONSTRUCTION_SITES)
+    );
+
+    if (blockers.length > 0) {
+        creep.say(`Recalculating path`);
+        delete Memory['routeCache'][cacheKey];
+        CalculateRoute(cacheKey, start, end);
+        res = creep.move(Memory['routeCache'][cacheKey].direction);
+    } else {
+        blockers = nextPos.lookFor(LOOK_CREEPS);
+        if (blockers.length > 0) {
+            res = creep.move(Math.floor(Math.random() * 8));
+        } else {
+            res = creep.move(Memory['routeCache'][cacheKey].direction);
+        }
+    }
+
     return res;
 }
