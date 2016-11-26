@@ -50,11 +50,12 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	const behaviours_1 = __webpack_require__(4);
 	const scheduler_1 = __webpack_require__(21);
 	const tasks_1 = __webpack_require__(22);
-	const towers_1 = __webpack_require__(25);
-	const profiler = __webpack_require__(26);
+	const towers_1 = __webpack_require__(26);
+	const profiler = __webpack_require__(27);
 	let scheduler = new scheduler_1.Scheduler();
 	scheduler.schedule(new tasks_1.RoadBuilder());
 	scheduler.schedule(new tasks_1.CacheCleaner());
+	scheduler.schedule(new tasks_1.SpawnSchedule());
 	function loop() {
 	    profiler.wrap(function () {
 	        spawner_1.Spawner.cleanup();
@@ -98,7 +99,6 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	        }
 	        scheduler.tick();
 	        Memory['roster'] = creepRoster;
-	        spawner_1.Spawner.autoSpawn();
 	    });
 	}
 	exports.loop = loop;
@@ -379,7 +379,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	function RecoverDropped(creep) {
 	    let cacheKey = `${creep.room.name}_droppedEnergy`;
 	    let droppedEnergy = cacheHelper_1.Cache.get(cacheKey, () => {
-	        return creep.pos.findClosestByPath(FIND_DROPPED_ENERGY, {
+	        return creep.pos.findClosestByRange(FIND_DROPPED_ENERGY, {
 	            filter: (x) => {
 	                return x.energy > 1000;
 	            }
@@ -500,9 +500,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                        || s.structureType === STRUCTURE_TOWER;
 	                });
 	                let primaryTargets = _.difference(targets, secondaryTargets);
-	                let closest = creep.pos.findClosestByPath(primaryTargets);
+	                let closest = creep.pos.findClosestByRange(primaryTargets);
 	                if (!closest) {
-	                    closest = creep.pos.findClosestByPath(secondaryTargets);
+	                    closest = creep.pos.findClosestByRange(secondaryTargets);
 	                }
 	                if (closest) {
 	                    creep.memory.target = closest.id;
@@ -566,7 +566,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    });
 	    if (containersWithEnergy.length > 0) {
 	        if (containersWithEnergy.length > 0) {
-	            let target = creep.pos.findClosestByPath(containersWithEnergy);
+	            let target = creep.pos.findClosestByRange(containersWithEnergy);
 	            if (!target) {
 	                return;
 	            }
@@ -669,10 +669,10 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                let primaryTargets = _.difference(buildTargets, secondaryTargets);
 	                let target;
 	                if (primaryTargets.length > 0) {
-	                    target = creep.pos.findClosestByPath(primaryTargets);
+	                    target = creep.pos.findClosestByRange(primaryTargets);
 	                }
 	                else {
-	                    target = creep.pos.findClosestByPath(secondaryTargets);
+	                    target = creep.pos.findClosestByRange(secondaryTargets);
 	                }
 	                if (!!target) {
 	                    creep.memory.target = target.id;
@@ -684,9 +684,9 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                    filter: (object) => object.hits < object.hitsMax
 	                }));
 	                if (repairTargets && repairTargets.length > 0) {
-	                    let closestByPath = creep.pos.findClosestByPath(repairTargets);
+	                    let closestByPath = creep.pos.findClosestByRange(repairTargets);
 	                    if (!!closestByPath) {
-	                        creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;
+	                        creep.memory.target = creep.pos.findClosestByRange(repairTargets).id;
 	                    }
 	                }
 	                else {
@@ -810,7 +810,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	                return;
 	            }
 	            if (!creep.memory.target) {
-	                let target = creep.pos.findClosestByPath(creep.room.find(FIND_SOURCES));
+	                let target = creep.pos.findClosestByRange(creep.room.find(FIND_SOURCES));
 	                creep.memory.target = target.id;
 	            }
 	            if (creep.memory.target) {
@@ -1261,6 +1261,8 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	exports.RoadBuilder = roadBuilder_1.RoadBuilder;
 	var cacheCleaner_1 = __webpack_require__(24);
 	exports.CacheCleaner = cacheCleaner_1.CacheCleaner;
+	var spawnSchedule_1 = __webpack_require__(25);
+	exports.SpawnSchedule = spawnSchedule_1.SpawnSchedule;
 
 
 /***/ },
@@ -1320,6 +1322,24 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	const spawner_1 = __webpack_require__(19);
+	class SpawnSchedule {
+	    constructor() {
+	        this.name = 'SPAWN_SCHEDULE';
+	        this.interval = 10;
+	    }
+	    run() {
+	        spawner_1.Spawner.autoSpawn();
+	    }
+	}
+	exports.SpawnSchedule = SpawnSchedule;
+
+
+/***/ },
+/* 26 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1359,7 +1379,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	let usedOnStart = 0;

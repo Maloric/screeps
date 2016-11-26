@@ -5,7 +5,7 @@ export function RecoverDropped(creep: Creep): boolean {
     let droppedEnergy = Cache.get(
         cacheKey,
         () => {
-            return creep.pos.findClosestByPath(FIND_DROPPED_ENERGY, {
+            return creep.pos.findClosestByRange(FIND_DROPPED_ENERGY, {
                 filter: (x: any) => {
                     return x.energy > 1000;
                 }

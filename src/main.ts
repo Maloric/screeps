@@ -2,7 +2,7 @@ import { Harvester, Upgrader, Builder, Archer, Serf, Distributor, Healer } from 
 import { Spawner } from './spawner';
 import { ReportStep } from './behaviours';
 import { Scheduler } from './scheduler';
-import { RoadBuilder, CacheCleaner } from './tasks';
+import { RoadBuilder, CacheCleaner, SpawnSchedule } from './tasks';
 import { RunTowers } from './towers';
 
 const profiler = require('screeps-profiler');
@@ -11,6 +11,7 @@ const profiler = require('screeps-profiler');
 let scheduler = new Scheduler();
 scheduler.schedule(new RoadBuilder());
 scheduler.schedule(new CacheCleaner());
+scheduler.schedule(new SpawnSchedule());
 export function loop() {
     profiler.wrap(function() {
         Spawner.cleanup();
@@ -56,7 +57,6 @@ export function loop() {
         }
         scheduler.tick();
         Memory['roster'] = creepRoster;
-        Spawner.autoSpawn();
     });
 };
 

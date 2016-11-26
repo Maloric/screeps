@@ -59,9 +59,9 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                         || s.structureType === STRUCTURE_TOWER;
                 });
                 let primaryTargets = _.difference(targets, secondaryTargets);
-                let closest = creep.pos.findClosestByPath(primaryTargets);
+                let closest = creep.pos.findClosestByRange(primaryTargets);
                 if (!closest) {
-                    closest = creep.pos.findClosestByPath(secondaryTargets);
+                    closest = creep.pos.findClosestByRange(secondaryTargets);
                 }
                 if (closest) {
                     creep.memory.target = closest.id;

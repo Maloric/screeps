@@ -7,7 +7,7 @@ export class Serf {
                 return;
             }
             if (!creep.memory.target) {
-                let target = <Source>creep.pos.findClosestByPath(creep.room.find(FIND_SOURCES));
+                let target = <Source>creep.pos.findClosestByRange(creep.room.find(FIND_SOURCES));
                 creep.memory.target = target.id;
             }
 

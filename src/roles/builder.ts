@@ -27,9 +27,9 @@ export class Builder {
 
                 let target: ConstructionSite;
                 if (primaryTargets.length > 0) {
-                    target = creep.pos.findClosestByPath(primaryTargets);
+                    target = creep.pos.findClosestByRange(primaryTargets);
                 } else {
-                    target = creep.pos.findClosestByPath(secondaryTargets);
+                    target = creep.pos.findClosestByRange(secondaryTargets);
                 }
                 if (!!target) {
                     creep.memory.target = target.id;
@@ -42,9 +42,9 @@ export class Builder {
 
                 if (repairTargets && repairTargets.length > 0) {
                     // repairTargets.sort((a: any, b: any) => a.hits - b.hits);
-                    let closestByPath = creep.pos.findClosestByPath(repairTargets);
+                    let closestByPath = creep.pos.findClosestByRange(repairTargets);
                     if (!!closestByPath) {
-                        creep.memory.target = creep.pos.findClosestByPath(repairTargets).id;
+                        creep.memory.target = creep.pos.findClosestByRange(repairTargets).id;
                     }
                 } else {
                     // console.log('No repair targets');

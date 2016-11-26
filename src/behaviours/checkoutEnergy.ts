@@ -23,7 +23,7 @@ export function CheckoutEnergy(creep: Creep): void {
     });
     if (containersWithEnergy.length > 0) {
         if (containersWithEnergy.length > 0) {
-            let target = creep.pos.findClosestByPath(containersWithEnergy);
+            let target = creep.pos.findClosestByRange(containersWithEnergy);
             if (!target) {
                 return;
             }
