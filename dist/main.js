@@ -238,7 +238,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	    let blockingConstructions = nextPos.lookFor(LOOK_CONSTRUCTION_SITES);
 	    let blockingCreeps = nextPos.lookFor(LOOK_CREEPS);
 	    blockingStructures = _.reject(blockingStructures, (x) => {
-	        return x.structureType !== STRUCTURE_ROAD;
+	        return x.structureType === STRUCTURE_ROAD;
 	    });
 	    if (blockingStructures.length > 0 || blockingConstructions.length > 0) {
 	        creep.say(`Recalculating path`);
@@ -485,7 +485,7 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 	            if (!!includeTower) {
 	                tower = _.find(targets, (s) => {
 	                    return s.structureType === STRUCTURE_TOWER
-	                        && s.energy < s.energyCapacity * 0.85;
+	                        && s.energy < 850;
 	                });
 	            }
 	            if (!!tower) {

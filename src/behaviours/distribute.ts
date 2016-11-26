@@ -47,7 +47,7 @@ export function Distribute(creep: Creep, includeTower: boolean = true) {
                 // Tower should have minimum 850 energy first
                 tower = _.find(targets, (s: any) => {
                     return s.structureType === STRUCTURE_TOWER
-                        && s.energy < s.energyCapacity * 0.85;
+                        && s.energy < 850;
                 });
             }
 

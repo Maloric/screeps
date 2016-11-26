@@ -76,7 +76,7 @@ export function MoveTo(creep: Creep, target: any): number {
     let blockingCreeps = nextPos.lookFor(LOOK_CREEPS);
 
     blockingStructures = _.reject(blockingStructures, (x: Structure) => {
-        return x.structureType !== STRUCTURE_ROAD;
+        return x.structureType === STRUCTURE_ROAD;
     });
 
     if (blockingStructures.length > 0 || blockingConstructions.length > 0) {
