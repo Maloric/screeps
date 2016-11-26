@@ -71,19 +71,21 @@ export function MoveTo(creep: Creep, target: any): number {
     let direction = Memory['routeCache'][cacheKey].direction;
 
     let nextPos = GetPositionByDirection(creep.pos, direction);
-    let blockers = _.merge(
-        nextPos.lookFor(LOOK_STRUCTURES),
-        nextPos.lookFor(LOOK_CONSTRUCTION_SITES)
-    );
+    let blockingStructures = nextPos.lookFor(LOOK_STRUCTURES);
+    let blockingConstructions = nextPos.lookFor(LOOK_CONSTRUCTION_SITES);
+    let blockingCreeps = nextPos.lookFor(LOOK_CREEPS);
 
-    if (blockers.length > 0) {
+    blockingStructures = _.reject(blockingStructures, (x: Structure) => {
+        return x.structureType !== STRUCTURE_ROAD;
+    });
+
+    if (blockingStructures.length > 0 || blockingConstructions.length > 0) {
         creep.say(`Recalculating path`);
         delete Memory['routeCache'][cacheKey];
         CalculateRoute(cacheKey, start, end);
         res = creep.move(Memory['routeCache'][cacheKey].direction);
     } else {
-        blockers = nextPos.lookFor(LOOK_CREEPS);
-        if (blockers.length > 0) {
+        if (blockingCreeps.length > 0) {
             res = creep.move(Math.floor(Math.random() * 8));
         } else {
             res = creep.move(Memory['routeCache'][cacheKey].direction);
