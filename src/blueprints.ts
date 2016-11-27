@@ -86,6 +86,14 @@ export const Blueprints: any = [
         max: 4,
         tiers: [
             {
+                cost: 1100,
+                capabilities: [
+                    WORK, WORK, WORK, WORK, WORK, WORK,
+                    CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                    MOVE, MOVE, MOVE, MOVE
+                ]
+            },
+            {
                 cost: 600,
                 capabilities: [
                     WORK, WORK, WORK,
